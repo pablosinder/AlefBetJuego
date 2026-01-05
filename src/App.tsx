@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { BookOpen, Loader2 } from 'lucide-react';
 import { supabase, HebrewLetter } from './lib/supabase';
+import { mockHebrewLetters } from './lib/mockData';
 import LetterCard from './components/LetterCard';
 import Navigation from './components/Navigation';
 
@@ -16,28 +17,35 @@ function App() {
   }, []);
 
   const loadLetters = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+    // try {
+    //   setLoading(true);
+    //   setError(null);
 
-      const { data, error: fetchError } = await supabase
-        .from('hebrew_letters')
-        .select('*')
-        .order('order_index', { ascending: true });
-
-      if (fetchError) throw fetchError;
-
-      if (data && data.length > 0) {
-        setLetters(data);
-      } else {
-        setError('No se encontraron letras. Por favor, agrega contenido a la base de datos.');
-      }
-    } catch (err) {
-      console.error('Error loading letters:', err);
-      setError('Error al cargar las letras del alfabeto');
-    } finally {
+      
+    //   const { data, error: fetchError } = await supabase
+    //   .from('hebrew_letters')
+    //   .select('*')
+    //   .order('order_index', { ascending: true });
+      
+    //   if (fetchError) throw fetchError;
+      
+        
+    //   if (data && data.length > 0) {
+    //     setLetters(data);
+    //   } else {
+    //     setLetters(mockHebrewLetters);
+    //     setError('No se encontraron letras. Por favor, agrega contenido a la base de datos.');
+    //   }
+    // } catch (err) {
+    //   console.error('Error loading letters:', err);
+    //   setError('Error al cargar las letras del alfabeto');
+    // } finally {
+    //   setLoading(false);
+    // }
+      console.log('MockData:', mockHebrewLetters);
+      setLetters(mockHebrewLetters);
       setLoading(false);
-    }
+
   };
 
   const playAudio = () => {
