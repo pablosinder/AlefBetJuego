@@ -9,7 +9,7 @@ export const mockHebrewLetters = [
     object_name_hebrew: 'אוירון',
     audio_url: '/src/assets/audio/audio.m4a',
     order_index: 1,
-    image_url: 'https://example.com/images/alef.jpg',
+    image_url: '/src/assets/img/avion.jpg',
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -19,9 +19,9 @@ export const mockHebrewLetters = [
     letter_name_hebrew: 'בית',
     object_name: 'Ball',
     object_name_hebrew: 'כדור',
-    audio_url: 'https://example.com/audio/bet.mp3',
+    audio_url: '/src/assets/audio/beit.m4a',
     order_index: 2,
-    image_url: 'https://example.com/images/bet.jpg',
+    image_url: '/src/assets/img/grifo.jpg',
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {

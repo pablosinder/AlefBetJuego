@@ -41,6 +41,11 @@ export default function LetterCard({ letter, onPlayAudio }: LetterCardProps) {
           </div>
 
           <div className="border-t-2 border-orange-200 pt-6 space-y-2">
+            <img
+              src={letter.image_url}
+              alt={letter.object_name}
+              className="w-auto h-40 object-cover rounded-2xl shadow-lg mx-auto"
+            />
             <p className="text-3xl font-semibold text-blue-600">
               {letter.object_name_hebrew}
             </p>
