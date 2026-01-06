@@ -16,6 +16,12 @@ function App() {
     loadLetters();
   }, []);
 
+  useEffect(() => {
+    if (letters.length > 0) {
+      playAudio();
+    }
+  }, [currentIndex, letters]);
+
   const loadLetters = async () => {
     // try {
     //   setLoading(true);
