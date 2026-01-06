@@ -1,4 +1,10 @@
 
+import avion from '../assets/img/avion.jpg';
+import grifo from '../assets/img/grifo.jpg';
+
+import audio from '../assets/audio/audio.m4a';
+import beit from '../assets/audio/beit.m4a';
+
 export const mockHebrewLetters = [
   {
     id: '1ee1a9f0-0000-4000-8000-000000000001',
@@ -7,9 +13,9 @@ export const mockHebrewLetters = [
     letter_name_hebrew: 'אלף',
     object_name: 'Avion',
     object_name_hebrew: 'אוירון',
-    audio_url: '/src/assets/audio/audio.m4a',
+    audio_url: audio,
     order_index: 1,
-    image_url: '/src/assets/img/avion.jpg',
+    image_url: avion,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -19,9 +25,9 @@ export const mockHebrewLetters = [
     letter_name_hebrew: 'בית',
     object_name: 'Ball',
     object_name_hebrew: 'כדור',
-    audio_url: '/src/assets/audio/beit.m4a',
+    audio_url: beit,
     order_index: 2,
-    image_url: '/src/assets/img/grifo.jpg',
+    image_url: grifo,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
