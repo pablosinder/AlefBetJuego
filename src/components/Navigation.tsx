@@ -22,14 +22,14 @@ export default function Navigation({
       <button
         onClick={onPrevious}
         disabled={!canGoPrevious}
-        className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all ${
+        className={`flex items-center gap-2 px-1 py-3 rounded-full font-semibold transition-all ${
           canGoPrevious
             ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg hover:shadow-xl'
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
         }`}
       >
         <ChevronLeft className="w-5 h-5" />
-        Anterior
+        
       </button>
 
       <div className="text-center">
@@ -51,13 +51,13 @@ export default function Navigation({
       <button
         onClick={onNext}
         disabled={!canGoNext}
-        className={`flex items-center gap-2 px-6 py-3 rounded-full font-semibold transition-all ${
+        className={`flex items-center gap-2 px-1 py-3 rounded-full font-semibold transition-all ${
           canGoNext
             ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg hover:shadow-xl'
             : 'bg-gray-200 text-gray-400 cursor-not-allowed'
         }`}
       >
-        Siguiente
+        
         <ChevronRight className="w-5 h-5" />
       </button>
     </div>
