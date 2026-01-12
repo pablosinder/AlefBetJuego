@@ -92,16 +92,32 @@ function App() {
   const currentLetter = letters[currentIndex];
 
   return (
-    <DragDropGame
-      letter={currentLetter}
-      onNext={handleNext}
-      onPrevious={handlePrevious}
-      currentIndex={currentIndex}
-      total={letters.length}
-      canGoNext={currentIndex < letters.length - 1}
-      canGoPrevious={currentIndex > 0}
-      allLetters={letters}
-    />
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <header className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <BookOpen className="w-10 h-10 text-orange-500" />
+            <h1 className="text-4xl font-bold text-gray-800">
+              Alfabeto Hebreo
+            </h1>
+          </div>
+          <p className="text-gray-600 text-lg">
+            Aprende las letras del Alef Bet
+          </p>
+        </header>
+
+        <DragDropGame
+          letter={currentLetter}
+          onNext={handleNext}
+          onPrevious={handlePrevious}
+          currentIndex={currentIndex}
+          total={letters.length}
+          canGoNext={currentIndex < letters.length - 1}
+          canGoPrevious={currentIndex > 0}
+          allLetters={letters}
+        />
+      </div>
+    </div>
   );
 }
 

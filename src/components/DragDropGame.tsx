@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { HebrewLetter } from '../lib/supabase';
 import { generateGameImages, GameImage } from '../lib/gameUtils';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Volume2 } from 'lucide-react';
 import FeedbackOverlay from './FeedbackOverlay';
+import LetterCard from './LetterCard';
 
 interface DragDropGameProps {
   letter: HebrewLetter;
@@ -165,14 +166,39 @@ export default function DragDropGame({
     setDisabled(false);
   };
 
+  const [isPressed, setIsPressed] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const onPlayAudio = () => {
+    const currentLetter = letter;
+    if (!currentLetter?.audio_url) return;
+
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+
+    audioRef.current = new Audio(currentLetter.audio_url);
+    audioRef.current.play().catch((err) => {
+      console.error('Error playing audio:', err);
+    });
+  };
+
+  const handleClick = () => {
+    setIsPressed(true);
+    onPlayAudio();
+    setTimeout(() => setIsPressed(false), 200);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 py-4 sm:py-8 px-3 sm:px-4">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 ">
       <div className="max-w-4xl mx-auto">
         <header className="text-center mb-4 sm:mb-8">
           <div className="flex items-center justify-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800">
+            {/* <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800">
               {letter.letter}
-            </h1>
+            </h1> */}
           </div>
           <p className="text-gray-600 text-sm sm:text-base">
             Arrastra la imagen correcta hacia la letra
@@ -181,19 +207,28 @@ export default function DragDropGame({
 
         <div className="space-y-8 sm:space-y-12">
           <div
+            onClick={handleClick}
             ref={letterDropZoneRef}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 md:p-16 border-4 border-orange-200 transition-all hover:shadow-xl cursor-pointer min-h-40 flex items-center justify-center"
           >
-            <div className="text-center">
+              
+            <button 
+              className={`justify-items-center transition-all duration-200 active:scale-105 ${
+              isPressed ? 'scale-90' : ''
+              } `}>
+              <div className="w-[5] top-4 right-4 sm:top-6 sm:right-6 bg-orange-500 text-white p-2 sm:p-3 rounded-full shadow-lg">
+                <Volume2 className="w-5 h-5 sm:w-6 sm:h-6" />
+              </div>
+              
               <p className="text-gray-400 text-sm sm:text-base mb-2">
                 Suelta aquí
               </p>
               <div className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-300">
                 {letter.letter}
               </div>
-            </div>
+            </button>
           </div>
 
           <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6">
@@ -217,18 +252,17 @@ export default function DragDropGame({
             ))}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+          <div className="flex flex-row items-center justify-between gap-3 sm:gap-4">
             <button
               onClick={onPrevious}
               disabled={!canGoPrevious}
-              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all w-full sm:w-auto justify-center ${
+              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all sm:w-auto justify-center ${
                 canGoPrevious
                   ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Anterior</span>
             </button>
 
             <div className="text-center flex-shrink-0">
@@ -252,13 +286,12 @@ export default function DragDropGame({
             <button
               onClick={onNext}
               disabled={!canGoNext}
-              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all w-full sm:w-auto justify-center ${
+              className={`flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-full font-semibold text-sm sm:text-base transition-all sm:w-auto justify-center ${
                 canGoNext
                   ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-lg'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
             >
-              <span className="hidden sm:inline">Siguiente</span>
               <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </button>
           </div>
