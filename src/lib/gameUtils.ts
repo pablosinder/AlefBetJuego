@@ -2,9 +2,16 @@ import { HebrewLetter } from './supabase';
 
 export interface GameImage {
   id: string;
-  url: string;
-  name: string;
+  letter : string;
+  letter_name : string;
+  letter_name_hebrew : string;
+  object_name : string;
+  object_name_hebrew : string;
+  audio_url : string;
+  image_url : string;
+  created_at : string;
   isCorrect: boolean;
+
 }
 
 export function getFirstLetter(text: string): string {
@@ -20,9 +27,15 @@ export function generateGameImages(
 
   const correctImage: GameImage = {
     id: currentLetter.id,
-    url: currentLetter.image_url,
-    name: currentLetter.object_name,
-    isCorrect: true,
+    letter: currentLetter.letter,
+    letter_name: currentLetter.letter_name,
+    letter_name_hebrew: currentLetter.letter_name_hebrew,
+    object_name: currentLetter.object_name,
+    object_name_hebrew: currentLetter.object_name_hebrew,
+    audio_url: currentLetter.audio_url,
+    image_url: currentLetter.image_url,
+    created_at: currentLetter.created_at,
+    isCorrect: true
   };
 
   const wrongLetters = letters.filter(
@@ -37,9 +50,15 @@ export function generateGameImages(
     .slice(0, 2)
     .map((letter): GameImage => ({
       id: letter.id,
-      url: letter.image_url,
-      name: letter.object_name,
-      isCorrect: false,
+      letter: letter.letter,
+      letter_name: letter.letter_name,
+      letter_name_hebrew: letter.letter_name_hebrew,
+      object_name: letter.object_name,
+      object_name_hebrew: letter.object_name_hebrew,
+      audio_url: letter.audio_url,
+      image_url: letter.image_url,
+      created_at: letter.created_at,
+      isCorrect: false
     }));
 
   const allImages = [correctImage, ...selectedWrong];

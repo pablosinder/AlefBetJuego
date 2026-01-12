@@ -151,6 +151,8 @@ export default function DragDropGame({
         if (draggedImg.isCorrect) {
           playSuccessSound();
           setFeedback({ isCorrect: true, show: true });
+          onPlayAudio();
+          setTimeout(() => onNext(), 2000);
         } else {
           playErrorSound();
           setFeedback({ isCorrect: false, show: true });
@@ -226,7 +228,11 @@ export default function DragDropGame({
                 Suelta aquí
               </p>
               <div className="text-6xl sm:text-7xl md:text-8xl font-bold text-gray-300">
-                {letter.letter}
+                <img
+                  src={letter.image_url}
+                  alt={letter.letter}
+                  className="w-auto object-cover"
+                />
               </div>
             </button>
           </div>
@@ -243,11 +249,18 @@ export default function DragDropGame({
                   draggedImage === img.id ? 'opacity-50 scale-95' : ''
                 } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
-                <img
-                  src={img.url}
-                  alt={img.name}
+                <div className="flex justify-center text-6xl sm:text-7xl md:text-8xl font-bold text-black-300">
+                  {img.letter}
+                </div>
+                {/* <div
+                  className="w-full h-32 sm:h-40 md:h-48 bg-center bg-cover"
+                >{img.letter}</div> */}
+                  
+                {/* <img
+                  src={img.image_url}
+                  alt={img.letter}
                   className="w-full h-32 sm:h-40 md:h-48 object-cover"
-                />
+                /> */}
               </div>
             ))}
           </div>
@@ -302,6 +315,7 @@ export default function DragDropGame({
         <FeedbackOverlay
           isCorrect={feedback.isCorrect}
           onComplete={handleFeedbackComplete}
+          onPlayAudio={onPlayAudio}
         />
       )}
     </div>
