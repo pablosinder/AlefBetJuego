@@ -194,26 +194,21 @@ export default function DragDropGame({
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 ">
-      <div className="max-w-4xl mx-auto">
-        <header className="text-center mb-4 sm:mb-8">
-          <div className="flex items-center justify-center gap-2 sm:gap-3 mb-1 sm:mb-2">
-            {/* <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800">
-              {letter.letter}
-            </h1> */}
-          </div>
+    <div className="w-full h-full overflow-hidden flex flex-col">
+      <div className="w-full h-full flex flex-col px-4 py-4">
+        <header className="text-center mb-2">
           <p className="text-gray-600 text-sm sm:text-base">
             Arrastra la imagen correcta hacia la letra
           </p>
         </header>
 
-        <div className="space-y-8 sm:space-y-12">
+        <div className="flex-1 flex flex-col justify-between gap-3 overflow-hidden">
           <div
             onClick={handleClick}
             ref={letterDropZoneRef}
             onDragOver={handleDragOver}
             onDrop={handleDrop}
-            className="bg-white rounded-3xl shadow-2xl p-8 sm:p-12 md:p-16 border-4 border-orange-200 transition-all hover:shadow-xl cursor-pointer min-h-40 flex items-center justify-center"
+            className="bg-white rounded-2xl shadow-lg p-6 border-4 border-orange-200 transition-all hover:shadow-xl cursor-pointer flex-1 flex items-center justify-center min-h-32"
           >
               
             <button 
@@ -237,7 +232,7 @@ export default function DragDropGame({
             </button>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 sm:gap-4 md:gap-6">
+          <div className="grid grid-cols-3 gap-2 sm:gap-3">
             {gameImages.map((img) => (
               <div
                 key={img.id}
@@ -265,7 +260,7 @@ export default function DragDropGame({
             ))}
           </div>
 
-          <div className="flex flex-row items-center justify-between gap-3 sm:gap-4">
+          <div className="flex flex-row items-center justify-between gap-2 sm:gap-3 py-2">
             <button
               onClick={onPrevious}
               disabled={!canGoPrevious}

@@ -62,7 +62,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 flex items-center justify-center">
+      <div className="h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="w-12 h-12 text-orange-500 animate-spin mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Cargando alfabeto hebreo...</p>
@@ -73,7 +73,7 @@ function App() {
 
   if (error || letters.length === 0) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 flex items-center justify-center p-4">
+      <div className="h-screen overflow-hidden bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md text-center">
           <div className="bg-red-100 text-red-600 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <BookOpen className="w-8 h-8" />
@@ -92,31 +92,17 @@ function App() {
   const currentLetter = letters[currentIndex];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 py-8 px-4">
-      <div className="max-w-4xl mx-auto">
-        <header className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-2">
-            <BookOpen className="w-10 h-10 text-orange-500" />
-            <h1 className="text-4xl font-bold text-gray-800">
-              Alfabeto Hebreo
-            </h1>
-          </div>
-          <p className="text-gray-600 text-lg">
-            Aprende las letras del Alef Bet
-          </p>
-        </header>
-
-        <DragDropGame
-          letter={currentLetter}
-          onNext={handleNext}
-          onPrevious={handlePrevious}
-          currentIndex={currentIndex}
-          total={letters.length}
-          canGoNext={currentIndex < letters.length - 1}
-          canGoPrevious={currentIndex > 0}
-          allLetters={letters}
-        />
-      </div>
+    <div className="h-screen w-screen overflow-hidden bg-gradient-to-br from-orange-50 via-blue-50 to-green-50 flex flex-col">
+      <DragDropGame
+        letter={currentLetter}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        currentIndex={currentIndex}
+        total={letters.length}
+        canGoNext={currentIndex < letters.length - 1}
+        canGoPrevious={currentIndex > 0}
+        allLetters={letters}
+      />
     </div>
   );
 }
