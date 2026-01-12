@@ -21,7 +21,7 @@ export default function LetterCard({ letter, onPlayAudio }: LetterCardProps) {
       <button
         onClick={handleClick}
         className={`relative bg-white rounded-3xl shadow-2xl p-6 sm:p-12 transition-all duration-200 hover:scale-105 active:scale-95 ${
-          isPressed ? 'scale-95' : ''
+          isPressed ? 'scale-50' : ''
         } border-2 sm:border-4 border-orange-200`}
       >
         <div className="absolute top-4 right-4 sm:top-6 sm:right-6 bg-orange-500 text-white p-2 sm:p-3 rounded-full shadow-lg">

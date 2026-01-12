@@ -1,9 +1,20 @@
 
 import avion from '../assets/img/avion.jpg';
 import grifo from '../assets/img/grifo.jpg';
+import camello from '../assets/img/camello.jpg';
+import hadas from '../assets/img/hadas.png';
+import puerta from '../assets/img/puerta.jpg';
+import rosa from '../assets/img/rosa.jpg';
+import trigo from '../assets/img/trigo.jpg';
 
-import audio from '../assets/audio/audio.m4a';
-import beit from '../assets/audio/beit.m4a';
+import audio from '../assets/audio/audio.wav';
+import beit from '../assets/audio/beitadina.wav';
+import camelloAudio from '../assets/audio/camello.m4a';
+import veredAudio from '../assets/audio/vered.wav';
+import hadasAudio from '../assets/audio/hadas.m4a';
+import puertaAudio from '../assets/audio/puerta.m4a';
+import rosaAudio from '../assets/audio/rosa.m4a';
+import trigoAudio from '../assets/audio/trigo.m4a';
 
 export const mockHebrewLetters = [
   {
@@ -35,11 +46,11 @@ export const mockHebrewLetters = [
     letter: 'ג',
     letter_name: 'Gimel',
     letter_name_hebrew: 'גימל',
-    object_name: 'Giraffe',
-    object_name_hebrew: 'גירפה',
-    audio_url: 'https://example.com/audio/gimel.mp3',
+    object_name: 'Camello',
+    object_name_hebrew: 'גמל',
+    audio_url: camelloAudio,
     order_index: 3,
-    image_url: 'https://example.com/images/gimel.jpg',
+    image_url: camello,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -49,9 +60,9 @@ export const mockHebrewLetters = [
     letter_name_hebrew: 'דלת',
     object_name: 'Door',
     object_name_hebrew: 'דלת',
-    audio_url: 'https://example.com/audio/dalet.mp3',
+    audio_url: puertaAudio,
     order_index: 4,
-    image_url: 'https://example.com/images/dalet.jpg',
+    image_url: puerta,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -59,11 +70,11 @@ export const mockHebrewLetters = [
     letter: 'ה',
     letter_name: 'He',
     letter_name_hebrew: 'ה',
-    object_name: 'Hat',
-    object_name_hebrew: 'כובע',
-    audio_url: 'https://example.com/audio/he.mp3',
+    object_name: 'Hadas',
+    object_name_hebrew: 'הדס',
+    audio_url: hadasAudio,
     order_index: 5,
-    image_url: 'https://example.com/images/he.jpg',
+    image_url: hadas,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -71,11 +82,11 @@ export const mockHebrewLetters = [
     letter: 'ו',
     letter_name: 'Vav',
     letter_name_hebrew: 'ו',
-    object_name: 'Vase',
-    object_name_hebrew: 'אגרטל',
-    audio_url: 'https://example.com/audio/vav.mp3',
+    object_name: 'Rosa',
+    object_name_hebrew: 'ורד',
+    audio_url: veredAudio,
     order_index: 6,
-    image_url: 'https://example.com/images/vav.jpg',
+    image_url: rosa,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -85,9 +96,9 @@ export const mockHebrewLetters = [
     letter_name_hebrew: 'זין',
     object_name: 'Zebra',
     object_name_hebrew: 'זברה',
-    audio_url: 'https://example.com/audio/zayin.mp3',
+    audio_url: '',
     order_index: 7,
-    image_url: 'https://example.com/images/zayin.jpg',
+    image_url: '',
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {
@@ -95,11 +106,11 @@ export const mockHebrewLetters = [
     letter: 'ח',
     letter_name: 'Chet',
     letter_name_hebrew: 'חית',
-    object_name: 'House',
-    object_name_hebrew: 'בית',
-    audio_url: 'https://example.com/audio/chet.mp3',
+    object_name: 'Trigo',
+    object_name_hebrew: 'חית',
+    audio_url: trigoAudio,
     order_index: 8,
-    image_url: 'https://example.com/images/chet.jpg',
+    image_url: trigo,
     created_at: '2026-01-05T00:00:00.000Z',
   },
   {

@@ -4,6 +4,7 @@ import { supabase, HebrewLetter } from './lib/supabase';
 import { mockHebrewLetters } from './lib/mockData';
 import LetterCard from './components/LetterCard';
 import Navigation from './components/Navigation';
+import SmilingGirl from './components/SmilingGirl';
 
 function App() {
   const [letters, setLetters] = useState<HebrewLetter[]>([]);
@@ -128,6 +129,8 @@ function App() {
         </header>
 
         <div className="space-y-8">
+
+          {/* <SmilingGirl></SmilingGirl> */}
           <LetterCard letter={currentLetter} onPlayAudio={playAudio} />
 
           <Navigation
