@@ -104,7 +104,7 @@ export default function InWordGame({ onBack }: { onBack: () => void }) {
         <SpeakButton text={[SAY.inWordAsk, letter.name]} size="sm" />
       </div>
 
-      <Feedback kind={q.feedback} id={q.fbId} />
+      <Feedback kind={q.feedback} id={q.fbId} text={q.feedbackText} />
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4" dir="rtl">
         {r.words.map((w, i) => {

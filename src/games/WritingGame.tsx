@@ -5,7 +5,7 @@ import { t, SAY } from '../strings';
 import { LETTERS, FINAL_LETTERS } from '../data/letters';
 import { saveStars } from '../lib/progress';
 import { sfx } from '../lib/sfx';
-import { pick } from '../lib/hebrew';
+import { cheer } from '../lib/cheer';
 import { say } from '../lib/audio';
 
 const ACCENT = '#f5b014';
@@ -41,6 +41,7 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
   const [feedback, setFeedback] = useState<'good' | 'bad' | null>(null);
   const [fbId, setFbId] = useState(0);
   const [hint, setHint] = useState<string | null>(null);
+  const [praise, setPraise] = useState('');
   const [party, setParty] = useState(false);
 
   const group = GROUPS.find((g) => g.id === groupId)!;
@@ -229,7 +230,9 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
     setFbId((i) => i + 1);
     if (coverage >= 0.6 && outRatio <= 0.3) {
       sfx.correct();
-      void say(item.name, pick(SAY.praise));
+      const praise = cheer.praise();
+      void say(item.name, praise);
+      setPraise(praise);
       setFeedback('good');
       setHint(null);
       const nd = new Set(done).add(item.char);
@@ -328,7 +331,7 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <Feedback kind={feedback} id={fbId} />
+      <Feedback kind={feedback} id={fbId} text={feedback === 'good' ? praise : undefined} />
       {hint && <p className="text-center text-rose-600 -mt-1 mb-2">{hint}</p>}
 
       <div className="flex gap-3 justify-center">

@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState, ComponentType } from 'react';
-import { Lock, Play, Star } from 'lucide-react';
+import { Lock, LogOut, Play, RotateCcw, Star, X } from 'lucide-react';
 import { t, SAY } from './strings';
 import { Stars } from './components/ui';
-import { loadProgress } from './lib/progress';
+import { loadProgress, resetProgress } from './lib/progress';
 import { preload, say, stopAudio, unlockAudio } from './lib/audio';
 import { allPhrases } from './audio/phrases';
 import { enterFullscreen, exitFullscreen, lockDown } from './lib/kiosk';
@@ -14,6 +14,8 @@ import InWordGame from './games/InWordGame';
 import VowelsGame from './games/VowelsGame';
 import WritingGame from './games/WritingGame';
 import SpeechPartsGame from './games/SpeechPartsGame';
+import CompleteWordGame from './games/CompleteWordGame';
+import ConnectGame from './games/ConnectGame';
 
 interface GameDef {
   id: string;
@@ -31,6 +33,8 @@ const GAMES: GameDef[] = [
   { id: 'inword', title: t.gInWordTitle, glyph: '🔍', color: '#8b5cf6', edge: '#6a3fd1', Component: InWordGame },
   { id: 'vowels', title: t.gVowelsTitle, glyph: 'אַ', color: '#2bb673', edge: '#1f8f58', Component: VowelsGame },
   { id: 'write', title: t.gWriteTitle, glyph: '✏️', color: '#f5b014', edge: '#c98c00', Component: WritingGame },
+  { id: 'complete', title: t.gCompleteTitle, glyph: 'אַ_', color: '#e8590c', edge: '#b8460a', Component: CompleteWordGame },
+  { id: 'connect', title: t.gConnectTitle, glyph: '🔗', color: '#0ea5e9', edge: '#0369a1', Component: ConnectGame },
   { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', Component: SpeechPartsGame },
 ];
 
@@ -38,6 +42,7 @@ export default function App() {
   const [started, setStarted] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [progress, setProgress] = useState(loadProgress);
+  const [parentOpen, setParentOpen] = useState(false);
   const unlockRef = useRef<(() => void) | null>(null);
 
   const goMenu = () => {
@@ -90,7 +95,7 @@ export default function App() {
               <Star className="w-7 h-7 fill-amber-400 text-amber-500" />
               <span className="tabular-nums">{totalStars}</span>
             </div>
-            <ParentExit onExit={parentExit} />
+            <ParentLock onOpen={() => setParentOpen(true)} />
           </div>
         </header>
 
@@ -122,6 +127,74 @@ export default function App() {
           ))}
         </div>
       </div>
+      {parentOpen && (
+        <ParentMenu
+          onClose={() => setParentOpen(false)}
+          onExit={() => {
+            setParentOpen(false);
+            parentExit();
+          }}
+          onReset={() => setProgress(resetProgress())}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Menú de padres: salir del juego o borrar las estrellas (con confirmación). */
+function ParentMenu({ onClose, onExit, onReset }: { onClose: () => void; onExit: () => void; onReset: () => void }) {
+  const [confirming, setConfirming] = useState(false);
+  const [resetDone, setResetDone] = useState(false);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        role="dialog"
+        aria-label={t.parentMenu}
+        className="anim-pop bg-white rounded-3xl shadow-xl w-full max-w-sm p-5 flex flex-col gap-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-1">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Lock className="w-6 h-6" /> {t.parentMenu}
+          </h2>
+          <button onClick={onClose} aria-label={t.parentBack} className="p-2 rounded-full hover:bg-black/5">
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+
+        <button
+          onClick={() => {
+            if (!confirming) return setConfirming(true);
+            onReset();
+            setConfirming(false);
+            setResetDone(true);
+          }}
+          className={`chunky px-4 py-3 text-lg font-bold flex items-center gap-3 ${
+            confirming ? 'bg-rose-500 border-rose-600 text-white' : 'bg-white border-[#e8dcc6]'
+          }`}
+          style={{ ['--chunk' as string]: confirming ? '#be123c' : '#d9cdb8' }}
+        >
+          <RotateCcw className="w-6 h-6 shrink-0" />
+          <span className="text-start">{confirming ? t.parentResetConfirm : t.parentReset}</span>
+        </button>
+        {resetDone && <p className="text-emerald-600 font-semibold text-center anim-pop">{t.parentResetDone} ✓</p>}
+
+        <button
+          onClick={onExit}
+          className="chunky bg-white border-[#e8dcc6] px-4 py-3 text-lg font-bold flex items-center gap-3"
+        >
+          <LogOut className="w-6 h-6 shrink-0 -scale-x-100" /> {t.parentExit}
+        </button>
+
+        <button
+          onClick={onClose}
+          className="chunky bg-[#2bb673] border-[#1f8f58] text-white px-4 py-3 text-lg font-bold"
+          style={{ ['--chunk' as string]: '#1a7a4b' }}
+        >
+          {t.parentBack}
+        </button>
+      </div>
     </div>
   );
 }
@@ -149,8 +222,8 @@ function StartScreen({ onStart }: { onStart: () => void }) {
   );
 }
 
-/** Botón para adultos: hay que mantenerlo apretado 3 segundos para salir. */
-function ParentExit({ onExit }: { onExit: () => void }) {
+/** Botón para adultos: hay que mantenerlo apretado 3 segundos para abrir el menú de padres. */
+function ParentLock({ onOpen }: { onOpen: () => void }) {
   const HOLD = 3000;
   const [pct, setPct] = useState(0);
   const timer = useRef<number | null>(null);
@@ -166,7 +239,7 @@ function ParentExit({ onExit }: { onExit: () => void }) {
     setPct(p);
     if (p >= 1) {
       cancel();
-      onExit();
+      onOpen();
     } else timer.current = requestAnimationFrame(tick);
   };
   const begin = (e: React.PointerEvent) => {

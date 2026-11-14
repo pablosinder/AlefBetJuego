@@ -1,8 +1,7 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { sfx } from './sfx';
 import { say } from './audio';
-import { SAY } from '../strings';
-import { pick } from './hebrew';
+import { cheer, STREAK_AT } from './cheer';
 import { saveStars, starsFor } from './progress';
 
 /** Estado común de los juegos por rondas: ronda actual, aciertos, errores y mensaje. */
@@ -11,32 +10,44 @@ export function useQuiz(gameId: string, total: number) {
   const [correct, setCorrect] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [feedback, setFeedback] = useState<'good' | 'bad' | null>(null);
+  const [feedbackText, setFeedbackText] = useState('');
   const [fbId, setFbId] = useState(0);
   const [done, setDone] = useState(false);
   const [stars, setStars] = useState(0);
   // Si el primer intento de la ronda fue correcto, cuenta como acierto.
   const [missedThisRound, setMissedThisRound] = useState(false);
+  // Rondas seguidas sin errores.
+  const streak = useRef(0);
+  const missedRef = useRef(false);
 
-  /** Acierto: sonido + (frases opcionales) + un elogio. */
+  /** Acierto: sonido + (frases opcionales) + un elogio (o festejo de racha). */
   const good = useCallback((...before: string[]) => {
     sfx.correct();
-    void say(...before, pick(SAY.praise));
+    const s = missedRef.current ? 0 : streak.current + 1;
+    const text = STREAK_AT.has(s) ? cheer.streak() : cheer.praise();
+    void say(...before, text);
+    setFeedbackText(text);
     setFeedback('good');
     setFbId((i) => i + 1);
   }, []);
 
-  /** Error: sonido + (frases opcionales) + "נסו שוב". */
+  /** Error: sonido + (frases opcionales) + una frase de ánimo. */
   const bad = useCallback((...before: string[]) => {
     sfx.wrong();
-    void say(...before, SAY.tryAgain);
+    const text = cheer.encourage();
+    void say(...before, text);
+    setFeedbackText(text);
     setFeedback('bad');
     setFbId((i) => i + 1);
     setMistakes((m) => m + 1);
     setMissedThisRound(true);
+    missedRef.current = true;
   }, []);
 
   const next = useCallback(() => {
     const newCorrect = correct + (missedThisRound ? 0 : 1);
+    streak.current = missedRef.current ? 0 : streak.current + 1;
+    missedRef.current = false;
     setCorrect(newCorrect);
     setFeedback(null);
     setMissedThisRound(false);
@@ -58,7 +69,9 @@ export function useQuiz(gameId: string, total: number) {
     setDone(false);
     setStars(0);
     setMissedThisRound(false);
+    streak.current = 0;
+    missedRef.current = false;
   }, []);
 
-  return { round, correct, mistakes, feedback, fbId, done, stars, good, bad, next, reset };
+  return { round, correct, mistakes, feedback, feedbackText, fbId, done, stars, good, bad, next, reset };
 }

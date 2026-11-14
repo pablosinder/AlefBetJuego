@@ -71,6 +71,21 @@ const EXTRA_WORDS: Word[] = [
   { he: 'חֶדֶר', emoji: '🚪' },
   { he: 'גִּיטָרָה', emoji: '🎸' },
   { he: 'תֹּף', emoji: '🥁' },
+  // De las hojas 3–8
+  { he: 'בָּצָל', emoji: '🧅' },
+  { he: 'עַגְבָנִיָּה', emoji: '🍅' },
+  { he: 'פַּנְדָּה', emoji: '🐼' },
+  { he: 'גּוֹרִילָה', emoji: '🦍' },
+  { he: 'זְבוּב', emoji: '🪰' },
+  { he: 'עֲטַלֵּף', emoji: '🦇' },
+  { he: 'בַּרְבּוּר', emoji: '🦢' },
+  { he: 'טַבַּעַת', emoji: '💍' },
+  { he: 'רוֹבּוֹט', emoji: '🤖' },
+  { he: 'עֲנִיבָה', emoji: '👔' },
+  { he: 'בַּלּוּט', emoji: '🌰' },
+  { he: 'חֶמְאָה', emoji: '🧈' },
+  { he: 'בַּנַּאי', emoji: '👷' },
+  { he: 'סַבָּא', emoji: '👴' },
 ];
 
 const LETTER_WORDS: Word[] = [

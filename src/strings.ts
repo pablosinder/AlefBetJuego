@@ -12,7 +12,13 @@ export const t = {
   great: 'כׇּל הַכָּבוֹד!',
   tryAgain: 'נַסּוּ שׁוּב',
   finished: 'סִיַּמְתֶּם!',
-  parentHold: 'לְהוֹרִים: לַחֲצוּ לְחִיצָה אֲרֻכָּה כְּדֵי לָצֵאת',
+  parentHold: 'לְהוֹרִים: לְחִיצָה אֲרֻכָּה פּוֹתַחַת אֶת תַּפְרִיט הַהוֹרִים',
+  parentMenu: 'תַּפְרִיט הוֹרִים',
+  parentExit: 'יְצִיאָה מֵהַמִּשְׂחָק',
+  parentReset: 'אִפּוּס הַנִּקּוּד',
+  parentResetConfirm: 'לִמְחֹק אֶת כׇּל הַכּוֹכָבִים? לַחֲצוּ שׁוּב לְאִשּׁוּר',
+  parentResetDone: 'הַנִּקּוּד אֻפַּס',
+  parentBack: 'חֲזָרָה לַמִּשְׂחָק',
 
   gLettersTitle: 'הָאוֹתִיּוֹת',
   gFirstTitle: 'הָאוֹת הָרִאשׁוֹנָה',
@@ -21,6 +27,8 @@ export const t = {
   gVowelsTitle: 'תְּנוּעוֹת',
   gWriteTitle: 'כְּתִיבַת אוֹתִיּוֹת',
   gPartsTitle: 'חֶלְקֵי הַדִּבּוּר',
+  gCompleteTitle: 'הַשְׁלִימוּ אֶת הַמִּלָּה',
+  gConnectTitle: 'חַבְּרוּ בְּקַו',
 
   lettersHint: 'לַחֲצוּ עַל אוֹת כְּדֵי לִשְׁמֹעַ',
   finalLetters: 'אוֹתִיּוֹת סוֹפִיּוֹת',
@@ -36,6 +44,8 @@ export const t = {
   writeMore: 'כִּמְעַט! כַּסּוּ עוֹד קְצָת מֵהָאוֹת',
   writeOutside: 'נַסּוּ לִכְתֹּב בְּתוֹךְ הָאוֹת',
   partsAsk: 'לְאֵיזוֹ קְבוּצָה שַׁיֶּכֶת הַמִּלָּה?',
+  completeAsk: 'אֵיזוֹ אוֹת חֲסֵרָה בַּמִּלָּה?',
+  connectAsk: 'חַבְּרוּ כׇּל תְּמוּנָה לָאוֹת שֶׁבָּהּ הִיא מַתְחִילָה',
   showDefs: 'מָה זֶה?',
 };
 
@@ -43,9 +53,40 @@ export const t = {
 export const SAY = {
   welcome: 'שָׁלוֹם! בּוֹאוּ נְשַׂחֵק וְנִלְמַד אֶת הָאוֹתִיּוֹת.',
   chooseGame: 'בַּחֲרוּ מִשְׂחָק',
-  praise: ['כׇּל הַכָּבוֹד!', 'מְצֻיָּן!', 'יוֹפִי!', 'אַלּוּפָה!'],
-  tryAgain: 'נַסּוּ שׁוּב',
-  finished: 'סִיַּמְתֶּם! כׇּל הַכָּבוֹד!',
+  /** Al acertar. */
+  praise: [
+    'כׇּל הַכָּבוֹד!',
+    'מְצֻיָּן!',
+    'יוֹפִי!',
+    'אַלּוּפָה!',
+    'נֶהְדָּר!',
+    'מְעֻלֶּה!',
+    'יָפֶה מְאוֹד!',
+    'בְּדִיּוּק!',
+    'נָכוֹן מְאוֹד!',
+    'אַתְּ כּוֹכֶבֶת!',
+    'הִצְלַחְתְּ!',
+    'אֵיזוֹ חֲכָמָה!',
+    'וָאוּ! אֵיזֶה יֹפִי!',
+    'אַתְּ גְּאוֹנָה!',
+  ],
+  /** Al equivocarse: ánimo para seguir. */
+  encourage: [
+    'נַסּוּ שׁוּב',
+    'לֹא נוֹרָא, נַסִּי שׁוּב!',
+    'כִּמְעַט! עוֹד פַּעַם',
+    'אַתְּ יְכוֹלָה!',
+    'בּוֹאִי נְנַסֶּה שׁוּב',
+    'עוֹד נִסָּיוֹן קָטָן!',
+  ],
+  /** Varias rondas seguidas sin errores. */
+  streak: ['שָׁלוֹשׁ בְּרֶצֶף! אַתְּ עַל הַגַּל!', 'אֵין עָלַיִךְ!', 'אַתְּ פָּשׁוּט מַדְהִימָה!'],
+  /** Al terminar un juego. */
+  finished: [
+    'סִיַּמְתֶּם! כׇּל הַכָּבוֹד!',
+    'סִיַּמְתְּ אֶת הַמִּשְׂחָק! אֵיזוֹ אַלּוּפָה!',
+    'וָאוּ, סִיַּמְתְּ! אֲנִי כׇּל כָּךְ גֵּאָה בָּךְ!',
+  ],
   lettersHint: t.lettersHint,
   firstAsk: t.firstAsk,
   findAsk: t.findAsk,
@@ -55,6 +96,8 @@ export const SAY = {
   writeMore: t.writeMore,
   writeOutside: t.writeOutside,
   partsAsk: t.partsAsk,
+  completeAsk: t.completeAsk,
+  connectAsk: t.connectAsk,
   gameTitles: [
     t.gLettersTitle,
     t.gFirstTitle,
@@ -63,5 +106,7 @@ export const SAY = {
     t.gVowelsTitle,
     t.gWriteTitle,
     t.gPartsTitle,
+    t.gCompleteTitle,
+    t.gConnectTitle,
   ],
 };

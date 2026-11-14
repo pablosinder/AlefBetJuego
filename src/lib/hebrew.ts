@@ -96,3 +96,29 @@ export function firstClusterLength(word: string): number {
   while (i < word.length && /[\u0591-\u05C7]/.test(word[i])) i++;
   return i;
 }
+
+/** Divide una palabra en "grupos": cada letra con su niqqud. */
+export function clusters(word: string): string[] {
+  const out: string[] = [];
+  for (const ch of word) {
+    if (/[֑-ׇ]/.test(ch) && out.length) out[out.length - 1] += ch;
+    else out.push(ch);
+  }
+  return out;
+}
+
+const VOWEL_MARK = /[ֱ-ׇֻ]/; // cualquier vocal salvo shva
+const DAGESH = 'ּ';
+
+/** El grupo tiene una vocal audible (no shva ni letra muda). */
+export function hasVowel(cluster: string): boolean {
+  return VOWEL_MARK.test(cluster);
+}
+
+/** Pone otra letra con la misma vocal: (בַּ, ג) → גַּ / (בַּ, ל) → לַ */
+export function swapLetter(cluster: string, letter: string): string {
+  const marks = [...cluster.slice(1)].filter((c) => c !== DAGESH && c !== 'ׁ' && c !== 'ׂ');
+  const dagesh = cluster.includes(DAGESH) && 'בכפ'.includes(letter) ? DAGESH : '';
+  const shin = letter === 'ש' ? 'ׁ' : '';
+  return letter + shin + dagesh + marks.join('');
+}

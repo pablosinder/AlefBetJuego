@@ -23,6 +23,16 @@ export function saveStars(gameId: string, stars: number): Progress {
   return p;
 }
 
+/** Borra todas las estrellas (menú de padres). */
+export function resetProgress(): Progress {
+  try {
+    localStorage.removeItem(KEY);
+  } catch {
+    // ignorar
+  }
+  return {};
+}
+
 export function starsFor(correct: number, mistakes: number): number {
   if (correct === 0) return 0;
   const ratio = correct / (correct + mistakes);

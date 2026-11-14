@@ -83,7 +83,7 @@ export default function SpeechPartsGame({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <Feedback kind={q.feedback} id={q.fbId} />
+      <Feedback kind={q.feedback} id={q.fbId} text={q.feedbackText} />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {SPEECH_PARTS.map((p) => {
