@@ -6,5 +6,65 @@ html,
 body,
 #root {
   height: 100%;
-  overflow: hidden;
+}
+
+body {
+  margin: 0;
+  font-family: 'Rubik', 'Arial Hebrew', 'Segoe UI', system-ui, sans-serif;
+  background: #fff8ee;
+  color: #2b2350;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#root {
+  overflow-y: auto;
+}
+
+.font-hebrew {
+  font-family: 'Rubik', 'Arial Hebrew', sans-serif;
+}
+
+@layer components {
+  /* Botón "en relieve": sombra sólida abajo que se hunde al tocar */
+  .chunky {
+    @apply relative rounded-2xl border-2 transition-transform duration-100 select-none;
+    box-shadow: 0 5px 0 0 var(--chunk, #d9cdb8);
+  }
+  .chunky:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 1px 0 0 var(--chunk, #d9cdb8);
+  }
+  .chunky:disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(8px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+}
+@keyframes floaty {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-8px) rotate(3deg); }
+}
+@keyframes confetti {
+  0% { transform: translate3d(0, -10vh, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate3d(var(--dx, 0), 105vh, 0) rotate(720deg); opacity: 0.9; }
+}
+
+.anim-pop { animation: pop 0.35s ease-out both; }
+.anim-shake { animation: shake 0.45s ease-in-out; }
+.anim-floaty { animation: floaty 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-pop, .anim-shake, .anim-floaty { animation: none; }
 }

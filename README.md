@@ -1,116 +1,32 @@
-# Alfabeto Hebreo - Aplicación Educativa
+# אָלֶף־בֵּית – Juegos para aprender hebreo
 
-Una aplicación interactiva para aprender las letras del alfabeto hebreo con audio y objetos asociados.
+Aplicación web para niños que empiezan a leer y escribir en hebreo. La interfaz está en **hebreo por defecto** (derecha a izquierda) y se puede cambiar a español con el botón de idioma.
 
-## Características
+## Juegos
 
-- Navegación intuitiva entre las letras del alfabeto hebreo
-- Audio configurable para cada letra y objeto
-- Diseño visual atractivo y educativo
-- Base de datos con Supabase para gestión de contenido
-- Interfaz completamente responsive
+| Juego | Qué se practica | Inspirado en |
+|---|---|---|
+| **הָאוֹתִיּוֹת** – Las letras | Las 22 letras y las 5 finales, con su nombre, una palabra de ejemplo y su pronunciación | Hoja de letras |
+| **הָאוֹת הָרִאשׁוֹנָה** – La primera letra | Escuchar una palabra y elegir con qué letra empieza | Hoja 1 (לוֹמְדִים: א – אֲוִירוֹן) |
+| **מִצְאוּ אֶת הָאוֹת** – Encontrá la letra | Marcar cada aparición de una letra entre letras parecidas | Hoja 1, ejercicio 1 (הַקִּיפוּ כׇּל אוֹת א) |
+| **אוֹת בַּמִּלָּה** – Letra en la palabra | Marcar los dibujos cuyo nombre tiene la letra | Hoja 1, ejercicio 4 |
+| **תְּנוּעוֹת** – Vocales | Elegir el dibujo cuyo nombre empieza con la vocal (אַ, אֶ, אִ, אוֹ, אוּ) | Hoja 2 (אָ, אַ) |
+| **כְּתִיבַת אוֹתִיּוֹת** – Escribir letras | Repasar la letra con el dedo o el mouse; se comprueba que el trazo cubra la letra. Grupos א–י, כ–ר, ש–ת + finales | Hojas de caligrafía 1, 2 y 5 |
+| **חֶלְקֵי הַדִּבּוּר** – Partes de la oración | Clasificar palabras en שֵׁם עֶצֶם, שֵׁם תֹּאַר, פֹּעַל, תֹּאַר הַפֹּעַל | Hoja de partes de la oración |
 
-## Estructura de Datos
+Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 
-Cada letra del alfabeto contiene:
+## Detalles
 
-- **letter**: La letra hebrea (ej: א)
-- **letter_name**: Nombre de la letra en español (ej: "Alef")
-- **letter_name_hebrew**: Nombre de la letra en hebreo (ej: אָלֶף)
-- **object_name**: Nombre del objeto en español (ej: "Avión")
-- **object_name_hebrew**: Nombre del objeto en hebreo (ej: אֲוִירוֹן)
-- **audio_url**: URL del archivo de audio
-- **order_index**: Orden en el alfabeto
-
-## Cómo Agregar Más Letras
-
-Puedes agregar más letras ejecutando consultas SQL en Supabase:
-
-```sql
-INSERT INTO hebrew_letters (
-  letter,
-  letter_name,
-  letter_name_hebrew,
-  object_name,
-  object_name_hebrew,
-  audio_url,
-  order_index
-) VALUES (
-  'ו',
-  'Vav',
-  'וָו',
-  'Gancho',
-  'וָו',
-  'https://tu-servidor.com/audio/vav-vav.mp3',
-  6
-);
-```
-
-## Configuración de Audio
-
-Las URLs de audio deben apuntar a archivos MP3 accesibles públicamente. Puedes:
-
-1. **Alojar en tu propio servidor**: Sube los archivos a tu servidor web
-2. **Usar servicios de almacenamiento**: Amazon S3, Google Cloud Storage, Cloudinary
-3. **Supabase Storage**: Usar el almacenamiento de Supabase
-
-### Ejemplo con Supabase Storage
-
-```typescript
-// Subir un archivo
-const { data, error } = await supabase.storage
-  .from('audio-files')
-  .upload('alef-aviron.mp3', audioFile);
-
-// Obtener URL pública
-const { data: publicURL } = supabase.storage
-  .from('audio-files')
-  .getPublicUrl('alef-aviron.mp3');
-```
-
-## Formato del Audio
-
-Se recomienda que el audio incluya:
-1. Nombre de la letra en hebreo
-2. Nombre del objeto en hebreo
-3. Ejemplo: "אָלֶף אֲוִירוֹן" (Alef Avión)
-
-## Alfabeto Hebreo Completo
-
-Aquí está la lista completa de las 22 letras:
-
-1. א (Alef)
-2. ב (Bet)
-3. ג (Guímel)
-4. ד (Dálet)
-5. ה (He)
-6. ו (Vav)
-7. ז (Záyin)
-8. ח (Jet)
-9. ט (Tet)
-10. י (Yod)
-11. כ/ך (Kaf)
-12. ל (Lámed)
-13. מ/ם (Mem)
-14. נ/ן (Nun)
-15. ס (Sámej)
-16. ע (Áyin)
-17. פ/ף (Pe)
-18. צ/ץ (Tsade)
-19. ק (Qof)
-20. ר (Resh)
-21. ש (Shin)
-22. ת (Tav)
+- **Voz:** usa la síntesis de voz del navegador en hebreo (`he-IL`). Si el dispositivo no tiene voz en hebreo, se avisa en el menú y se puede jugar igual.
+- **Dibujos:** emojis, sin imágenes externas.
+- **Contenido:** está en `src/data/` (`letters.ts`, `words.ts`, `speechParts.ts`). Para agregar palabras basta con sumar entradas con niqqud; los juegos de vocales y letras las clasifican solos.
 
 ## Desarrollo
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Iniciar servidor de desarrollo
-npm run dev
-
-# Compilar para producción
-npm run build
+npm run dev        # servidor local
+npm run build      # compilar a dist/
+npm run deploy     # publicar en GitHub Pages
 ```
