@@ -191,7 +191,7 @@ export default function ConnectGame({ onBack }: { onBack: () => void }) {
         <p className="text-lg sm:text-xl font-semibold text-center">{t.connectAsk}</p>
         <SpeakButton text={SAY.connectAsk} size="sm" />
       </div>
-      <Feedback kind={q.feedback} id={q.fbId} />
+      <Feedback kind={q.feedback} id={q.fbId} text={q.feedbackText} />
 
       <div
         ref={boxRef}

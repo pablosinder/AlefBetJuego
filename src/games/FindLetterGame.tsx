@@ -110,7 +110,7 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <Feedback kind={q.feedback} id={q.fbId} />
+      <Feedback kind={q.feedback} id={q.fbId} text={q.feedbackText} />
 
       <div className="grid grid-cols-5 gap-2 sm:gap-3 max-w-lg mx-auto w-full" dir="rtl">
         {r.cells.map((c, i) => {

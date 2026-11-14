@@ -95,7 +95,7 @@ export default function VowelsGame({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <Feedback kind={q.feedback} id={q.fbId} />
+      <Feedback kind={q.feedback} id={q.fbId} text={q.feedbackText} />
 
       <div className="grid grid-cols-2 gap-3 sm:gap-4 max-w-lg mx-auto w-full" dir="rtl">
         {r.options.map((w) => {

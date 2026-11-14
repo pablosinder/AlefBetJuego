@@ -1,6 +1,7 @@
-import { ReactNode, useEffect, useMemo } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Volume2, Star, RotateCcw, Home } from 'lucide-react';
-import { t, SAY } from '../strings';
+import { t } from '../strings';
+import { cheer } from '../lib/cheer';
 import { say } from '../lib/audio';
 import { sfx } from '../lib/sfx';
 
@@ -138,15 +139,16 @@ export function EndScreen({
   onAgain: () => void;
   onMenu: () => void;
 }) {
+  const [text] = useState(cheer.finished);
   useEffect(() => {
     sfx.win();
-    void say(SAY.finished);
-  }, []);
+    void say(text);
+  }, [text]);
   return (
     <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 py-10">
       <Confetti />
       <div className="text-7xl anim-floaty">🏆</div>
-      <h2 className="text-3xl sm:text-4xl font-extrabold anim-pop">{t.finished}</h2>
+      <h2 className="text-3xl sm:text-4xl font-extrabold anim-pop px-4">{text}</h2>
       <Stars n={stars} size="w-12 h-12" />
       <p className="text-2xl font-bold opacity-70 tabular-nums" dir="ltr">{correct} / {total}</p>
       <div className="flex flex-wrap gap-3 justify-center mt-2">
@@ -169,7 +171,7 @@ export function EndScreen({
 }
 
 /** Mensaje breve de acierto / error. */
-export function Feedback({ kind, id }: { kind: 'good' | 'bad' | null; id: number }) {
+export function Feedback({ kind, id, text }: { kind: 'good' | 'bad' | null; id: number; text?: string }) {
   if (!kind) return <div className="h-10" />;
   return (
     <div
@@ -179,7 +181,7 @@ export function Feedback({ kind, id }: { kind: 'good' | 'bad' | null; id: number
       }`}
       role="status"
     >
-      {kind === 'good' ? t.great : t.tryAgain}
+      {text || (kind === 'good' ? t.great : t.tryAgain)}
     </div>
   );
 }

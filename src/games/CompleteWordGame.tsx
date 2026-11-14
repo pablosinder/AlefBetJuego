@@ -134,7 +134,7 @@ export default function CompleteWordGame({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
-      <Feedback kind={q.feedback} id={q.fbId} />
+      <Feedback kind={q.feedback} id={q.fbId} text={q.feedbackText} />
 
       <div className="grid grid-cols-4 gap-3 sm:gap-4 max-w-md mx-auto w-full" dir="rtl">
         {r.options.map((c) => {
