@@ -1,116 +1,57 @@
-# Alfabeto Hebreo - Aplicación Educativa
+# אָלֶף־בֵּית – Juegos para aprender hebreo
 
-Una aplicación interactiva para aprender las letras del alfabeto hebreo con audio y objetos asociados.
+Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está en hebreo (derecha a izquierda) y las instrucciones se dicen en voz alta, pensado para una niña de 5 años que todavía no lee.
 
-## Características
+## Juegos
 
-- Navegación intuitiva entre las letras del alfabeto hebreo
-- Audio configurable para cada letra y objeto
-- Diseño visual atractivo y educativo
-- Base de datos con Supabase para gestión de contenido
-- Interfaz completamente responsive
+| Juego | Qué se practica | Inspirado en |
+|---|---|---|
+| **הָאוֹתִיּוֹת** – Las letras | Las 22 letras y las 5 finales, con su nombre, una palabra de ejemplo y su pronunciación | Hoja de letras |
+| **הָאוֹת הָרִאשׁוֹנָה** – La primera letra | Escuchar una palabra y elegir con qué letra empieza | Hoja 1 (לוֹמְדִים: א – אֲוִירוֹן) |
+| **מִצְאוּ אֶת הָאוֹת** – Encontrá la letra | Marcar cada aparición de una letra entre letras parecidas | Hoja 1, ejercicio 1 (הַקִּיפוּ כׇּל אוֹת א) |
+| **אוֹת בַּמִּלָּה** – Letra en la palabra | Marcar los dibujos cuyo nombre tiene la letra | Hoja 1, ejercicio 4 |
+| **תְּנוּעוֹת** – Vocales | Elegir el dibujo cuyo nombre empieza con la vocal (אַ, אֶ, אִ, אוֹ, אוּ) | Hoja 2 (אָ, אַ) |
+| **כְּתִיבַת אוֹתִיּוֹת** – Escribir letras | Repasar la letra con el dedo o el mouse; se comprueba que el trazo cubra la letra. Grupos א–י, כ–ר, ש–ת + finales | Hojas de caligrafía 1, 2 y 5 |
+| **חֶלְקֵי הַדִּבּוּר** – Partes de la oración | Clasificar palabras en שֵׁם עֶצֶם, שֵׁם תֹּאַר, פֹּעַל, תֹּאַר הַפֹּעַל | Hoja de partes de la oración |
 
-## Estructura de Datos
+Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 
-Cada letra del alfabeto contiene:
+## Modo niño
 
-- **letter**: La letra hebrea (ej: א)
-- **letter_name**: Nombre de la letra en español (ej: "Alef")
-- **letter_name_hebrew**: Nombre de la letra en hebreo (ej: אָלֶף)
-- **object_name**: Nombre del objeto en español (ej: "Avión")
-- **object_name_hebrew**: Nombre del objeto en hebreo (ej: אֲוִירוֹן)
-- **audio_url**: URL del archivo de audio
-- **order_index**: Orden en el alfabeto
+- Al abrir aparece un botón grande **בּוֹאוּ נְשַׂחֵק!** que activa la pantalla completa y el audio.
+- El botón o gesto "atrás" del teléfono vuelve al menú en vez de salir de la página.
+- Cerrar o recargar la pestaña pide confirmación. Sin zoom, sin selección de texto, sin menú de pulsación larga; la pantalla no se apaga mientras se juega.
+- Si se sale de pantalla completa, el siguiente toque la vuelve a activar.
+- **Salida para padres:** mantener apretado 3 segundos el candado 🔒 del menú.
+- **iPhone:** Safari no permite pantalla completa en páginas web. Hay que abrir el sitio, tocar *Compartir → Agregar a inicio* y abrir el juego desde ese ícono: se abre sin barras del navegador. En Android también conviene *Agregar a pantalla principal*.
 
-## Cómo Agregar Más Letras
+## Voces
 
-Puedes agregar más letras ejecutando consultas SQL en Supabase:
+El juego reproduce MP3 grabados de `public/audio/` (uno por frase, letra o palabra; el catálogo está en `public/audio/catalog.json`). Si falta alguno, usa la voz en hebreo del dispositivo.
 
-```sql
-INSERT INTO hebrew_letters (
-  letter,
-  letter_name,
-  letter_name_hebrew,
-  object_name,
-  object_name_hebrew,
-  audio_url,
-  order_index
-) VALUES (
-  'ו',
-  'Vav',
-  'וָו',
-  'Gancho',
-  'וָו',
-  'https://tu-servidor.com/audio/vav-vav.mp3',
-  6
-);
+Para grabarlas con Gemini (necesita una clave de [Google AI Studio](https://aistudio.google.com/apikey) y `ffmpeg`):
+
+```bash
+GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs          # graba lo que falta
+GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all    # vuelve a grabar todo
+GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --only "אָלֶף"   # una sola frase
+GEMINI_VOICE=Kore GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all  # otra voz
 ```
 
-## Configuración de Audio
+Para escucharlas todas: abrir `/voces.html` en el sitio.
 
-Las URLs de audio deben apuntar a archivos MP3 accesibles públicamente. Puedes:
+## Contenido
 
-1. **Alojar en tu propio servidor**: Sube los archivos a tu servidor web
-2. **Usar servicios de almacenamiento**: Amazon S3, Google Cloud Storage, Cloudinary
-3. **Supabase Storage**: Usar el almacenamiento de Supabase
+Está en `src/data/` (`letters.ts`, `words.ts`, `speechParts.ts`) y los textos en `src/strings.ts`. Para agregar palabras basta con sumar entradas con niqqud y volver a correr el script de voces.
 
-### Ejemplo con Supabase Storage
+## Publicación en Vercel
 
-```typescript
-// Subir un archivo
-const { data, error } = await supabase.storage
-  .from('audio-files')
-  .upload('alef-aviron.mp3', audioFile);
-
-// Obtener URL pública
-const { data: publicURL } = supabase.storage
-  .from('audio-files')
-  .getPublicUrl('alef-aviron.mp3');
-```
-
-## Formato del Audio
-
-Se recomienda que el audio incluya:
-1. Nombre de la letra en hebreo
-2. Nombre del objeto en hebreo
-3. Ejemplo: "אָלֶף אֲוִירוֹן" (Alef Avión)
-
-## Alfabeto Hebreo Completo
-
-Aquí está la lista completa de las 22 letras:
-
-1. א (Alef)
-2. ב (Bet)
-3. ג (Guímel)
-4. ד (Dálet)
-5. ה (He)
-6. ו (Vav)
-7. ז (Záyin)
-8. ח (Jet)
-9. ט (Tet)
-10. י (Yod)
-11. כ/ך (Kaf)
-12. ל (Lámed)
-13. מ/ם (Mem)
-14. נ/ן (Nun)
-15. ס (Sámej)
-16. ע (Áyin)
-17. פ/ף (Pe)
-18. צ/ץ (Tsade)
-19. ק (Qof)
-20. ר (Resh)
-21. ש (Shin)
-22. ת (Tav)
+Vercel detecta Vite solo: *Build command* `npm run build`, *Output directory* `dist`. El sitio funciona desde la raíz del dominio.
 
 ## Desarrollo
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Iniciar servidor de desarrollo
-npm run dev
-
-# Compilar para producción
-npm run build
+npm run dev        # servidor local
+npm run build      # compilar a dist/
 ```
