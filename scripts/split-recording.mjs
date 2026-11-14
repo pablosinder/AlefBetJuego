@@ -51,7 +51,7 @@ function parse(stderr) {
 // Probar varios umbrales hasta que la cantidad de tramos coincida con la tanda.
 let found = null;
 const tried = [];
-outer: for (const minSilence of [0.9, 0.7, 1.2, 0.5, 1.5]) {
+outer: for (const minSilence of [0.9, 0.7, 1.2, 0.5, 1.5, 0.45, 0.4, 0.35]) {
   for (const noiseDb of [-40, -35, -45, -30, -50]) {
     const r = spawnSync('ffmpeg', ['-hide_banner', '-i', input, '-af', `silencedetect=noise=${noiseDb}dB:d=${minSilence}`, '-f', 'null', '-']);
     const segs = parse(r.stderr.toString());
