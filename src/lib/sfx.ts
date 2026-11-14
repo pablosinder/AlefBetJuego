@@ -1,19 +1,8 @@
 // Efectos de sonido sintetizados (sin archivos).
 
-let ctx: AudioContext | null = null;
+import { audioContext } from './audio';
 
-function audio(): AudioContext | null {
-  try {
-    if (!ctx) {
-      const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      ctx = new AC();
-    }
-    if (ctx.state === 'suspended') void ctx.resume();
-    return ctx;
-  } catch {
-    return null;
-  }
-}
+const audio = audioContext;
 
 function tone(freq: number, start: number, dur: number, type: OscillatorType = 'sine', vol = 0.2) {
   const c = audio();

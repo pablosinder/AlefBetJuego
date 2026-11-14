@@ -3,7 +3,8 @@ import { Lock, Play, Star } from 'lucide-react';
 import { t, SAY } from './strings';
 import { Stars } from './components/ui';
 import { loadProgress } from './lib/progress';
-import { say, stopAudio, unlockAudio } from './lib/audio';
+import { preload, say, stopAudio, unlockAudio } from './lib/audio';
+import { allPhrases } from './audio/phrases';
 import { enterFullscreen, exitFullscreen, lockDown } from './lib/kiosk';
 import { sfx } from './lib/sfx';
 import LettersGame from './games/LettersGame';
@@ -47,6 +48,7 @@ export default function App() {
 
   const start = () => {
     unlockAudio();
+    preload(allPhrases().map((p) => p.text)); // ~1,5 MB: todas las voces listas sin demora
     enterFullscreen();
     unlockRef.current?.();
     unlockRef.current = lockDown(goMenu);
