@@ -1,30 +1,27 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GameShell, SpeakButton, Stars } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
 import { LETTERS, FINAL_LETTERS } from '../data/letters';
 import { firstClusterLength } from '../lib/hebrew';
-import { speak } from '../lib/speech';
+import { say } from '../lib/audio';
 import { saveStars } from '../lib/progress';
 import { sfx } from '../lib/sfx';
 
 interface Card {
   char: string;
   name: string;
-  nameEs: string;
   word: string;
-  wordEs: string;
   emoji: string;
 }
 
 export default function LettersGame({ onBack }: { onBack: () => void }) {
-  const { t, lang } = useI18n();
   const [selected, setSelected] = useState<Card>(LETTERS[0]);
   const [seen, setSeen] = useState<Set<string>>(() => new Set());
   const [rewarded, setRewarded] = useState(false);
 
   const choose = (c: Card) => {
     setSelected(c);
-    speak(c.name);
+    void say(c.name, c.word);
     const next = new Set(seen).add(c.char);
     setSeen(next);
     if (!rewarded && LETTERS.every((l) => next.has(l.char))) {
@@ -33,6 +30,10 @@ export default function LettersGame({ onBack }: { onBack: () => void }) {
       sfx.win();
     }
   };
+
+  useEffect(() => {
+    void say(SAY.lettersHint);
+  }, []);
 
   const seenCount = LETTERS.filter((l) => seen.has(l.char)).length;
 
@@ -51,7 +52,6 @@ export default function LettersGame({ onBack }: { onBack: () => void }) {
             <span className="text-2xl font-bold font-hebrew" dir="rtl">{selected.name}</span>
             <SpeakButton text={selected.name} size="sm" />
           </div>
-          {lang === 'es' && <span className="text-sm opacity-60">{selected.nameEs}</span>}
         </div>
         <div className="flex-1 flex flex-col items-center gap-2 border-s-2 border-dashed border-[#f0dcbc] ps-4 sm:ps-8">
           <div className="text-6xl sm:text-7xl anim-floaty" aria-hidden>{selected.emoji}</div>
@@ -62,7 +62,6 @@ export default function LettersGame({ onBack }: { onBack: () => void }) {
             </span>
             <SpeakButton text={selected.word} size="sm" />
           </div>
-          {lang === 'es' && <span className="text-sm opacity-60">{selected.wordEs}</span>}
         </div>
       </section>
 

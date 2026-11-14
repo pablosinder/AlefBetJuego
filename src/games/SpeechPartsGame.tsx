@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import { EndScreen, Feedback, GameShell, SpeakButton } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
+import { say } from '../lib/audio';
 import { PART_WORDS, SPEECH_PARTS, PartId } from '../data/speechParts';
 import { sample } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
@@ -10,7 +11,6 @@ const TOTAL = 12;
 const ACCENT = '#14b8c4';
 
 export default function SpeechPartsGame({ onBack }: { onBack: () => void }) {
-  const { t, lang } = useI18n();
   const [seed, setSeed] = useState(0);
   const rounds = useMemo(() => sample(PART_WORDS, TOTAL), [seed]); // eslint-disable-line react-hooks/exhaustive-deps
   const q = useQuiz('parts', TOTAL);
@@ -20,11 +20,15 @@ export default function SpeechPartsGame({ onBack }: { onBack: () => void }) {
 
   const w = rounds[q.round];
 
+  useEffect(() => {
+    if (!q.done) void (q.round === 0 ? say(SAY.partsAsk, w.he) : say(w.he));
+  }, [q.round, seed]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const choose = (p: PartId) => {
     if (solved || wrong.includes(p)) return;
     if (p === w.part) {
       setSolved(true);
-      q.good();
+      q.good(SPEECH_PARTS.find((x) => x.id === p)!.he);
       setTimeout(() => {
         setWrong([]);
         setSolved(false);
@@ -77,7 +81,6 @@ export default function SpeechPartsGame({ onBack }: { onBack: () => void }) {
           <span className="text-5xl sm:text-6xl font-bold font-hebrew" dir="rtl">{w.he}</span>
           <SpeakButton text={w.he} />
         </div>
-        {lang === 'es' && <span className="opacity-60">{w.es}</span>}
       </div>
 
       <Feedback kind={q.feedback} id={q.fbId} />
@@ -95,9 +98,9 @@ export default function SpeechPartsGame({ onBack }: { onBack: () => void }) {
                 isWrong ? 'anim-shake' : ''
               }`}
             >
-              <span className="text-2xl font-bold font-hebrew">{lang === 'he' ? p.he : `${p.es} · ${p.he}`}</span>
+              <span className="text-2xl font-bold font-hebrew">{p.he}</span>
               {showDefs && (
-                <span className="text-sm opacity-80 font-hebrew">{lang === 'he' ? p.defHe : p.defEs}</span>
+                <span className="text-sm opacity-80 font-hebrew">{p.def}</span>
               )}
             </button>
           );

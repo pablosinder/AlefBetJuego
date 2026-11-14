@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useMemo } from 'react';
-import { ArrowRight, ArrowLeft, Volume2, Star, RotateCcw, Home } from 'lucide-react';
-import { useI18n } from '../i18n';
-import { speak } from '../lib/speech';
+import { ArrowRight, Volume2, Star, RotateCcw, Home } from 'lucide-react';
+import { t, SAY } from '../strings';
+import { say } from '../lib/audio';
 import { sfx } from '../lib/sfx';
 
 export function GameShell({
@@ -17,8 +17,6 @@ export function GameShell({
   progress?: { current: number; total: number };
   children: ReactNode;
 }) {
-  const { t, dir } = useI18n();
-  const BackIcon = dir === 'rtl' ? ArrowRight : ArrowLeft;
   return (
     <div className="min-h-full flex flex-col">
       <header className="sticky top-0 z-20 bg-[#fff8ee]/90 backdrop-blur border-b border-[#efe3cf]">
@@ -28,7 +26,7 @@ export function GameShell({
             aria-label={t.back}
             className="chunky bg-white border-[#e8dcc6] p-2"
           >
-            <BackIcon className="w-6 h-6" />
+            <ArrowRight className="w-8 h-8" />
           </button>
           <h1 className="text-xl sm:text-2xl font-bold flex-1 truncate">{title}</h1>
           {progress && (
@@ -59,11 +57,10 @@ export function SpeakButton({
   size = 'md',
   className = '',
 }: {
-  text: string;
+  text: string | string[];
   size?: 'sm' | 'md' | 'lg';
   className?: string;
 }) {
-  const { t } = useI18n();
   const dims = { sm: 'w-9 h-9', md: 'w-12 h-12', lg: 'w-16 h-16' }[size];
   const icon = { sm: 'w-4 h-4', md: 'w-6 h-6', lg: 'w-8 h-8' }[size];
   return (
@@ -72,7 +69,7 @@ export function SpeakButton({
       aria-label={t.listen}
       onClick={(e) => {
         e.stopPropagation();
-        speak(text);
+        void say(...(Array.isArray(text) ? text : [text]));
       }}
       className={`chunky ${dims} shrink-0 rounded-full bg-[#ff8a3d] border-[#e8702a] text-white flex items-center justify-center ${className}`}
       style={{ ['--chunk' as string]: '#c85d1d' }}
@@ -141,9 +138,9 @@ export function EndScreen({
   onAgain: () => void;
   onMenu: () => void;
 }) {
-  const { t } = useI18n();
   useEffect(() => {
     sfx.win();
+    void say(SAY.finished);
   }, []);
   return (
     <div className="flex-1 flex flex-col items-center justify-center text-center gap-5 py-10">
@@ -151,7 +148,7 @@ export function EndScreen({
       <div className="text-7xl anim-floaty">🏆</div>
       <h2 className="text-3xl sm:text-4xl font-extrabold anim-pop">{t.finished}</h2>
       <Stars n={stars} size="w-12 h-12" />
-      <p className="text-lg opacity-80">{t.correctOutOf(correct, total)}</p>
+      <p className="text-2xl font-bold opacity-70 tabular-nums" dir="ltr">{correct} / {total}</p>
       <div className="flex flex-wrap gap-3 justify-center mt-2">
         <button
           onClick={onAgain}
@@ -173,7 +170,6 @@ export function EndScreen({
 
 /** Mensaje breve de acierto / error. */
 export function Feedback({ kind, id }: { kind: 'good' | 'bad' | null; id: number }) {
-  const { t } = useI18n();
   if (!kind) return <div className="h-10" />;
   return (
     <div

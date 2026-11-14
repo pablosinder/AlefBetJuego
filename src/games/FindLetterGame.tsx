@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { EndScreen, Feedback, GameShell, SpeakButton } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
 import { LETTERS, LETTER_BY_CHAR } from '../data/letters';
 import { pick, sample, shuffle } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
-import { speak } from '../lib/speech';
+import { sfx } from '../lib/sfx';
+import { say } from '../lib/audio';
 
 const TOTAL = 6;
 const CELLS = 20;
@@ -33,7 +34,6 @@ function makeRounds(): Round[] {
 }
 
 export default function FindLetterGame({ onBack }: { onBack: () => void }) {
-  const { t } = useI18n();
   const [seed, setSeed] = useState(0);
   const rounds = useMemo(() => makeRounds(), [seed]); // eslint-disable-line react-hooks/exhaustive-deps
   const q = useQuiz('find', TOTAL);
@@ -46,7 +46,7 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
 
   useEffect(() => {
     setFound(new Set());
-    if (!q.done) speak(letter.name);
+    if (!q.done) void say(SAY.findAsk, letter.name);
   }, [q.round, seed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tap = (i: number) => {
@@ -54,6 +54,7 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
     if (r.cells[i] === r.target) {
       const nf = new Set(found).add(i);
       setFound(nf);
+      sfx.tap();
       if (nf.size === totalTargets) {
         q.good();
         setTimeout(q.next, 1300);
@@ -92,14 +93,20 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
           {r.target}
         </div>
         <div className="flex flex-col gap-1">
-          <p className="text-lg sm:text-xl font-semibold">{t.findAsk(r.target)}</p>
+          <p className="text-lg sm:text-xl font-semibold">{t.findAsk} {r.target}</p>
           <div className="flex items-center gap-2">
             <span className="text-xl font-bold font-hebrew" dir="rtl">{letter.name}</span>
-            <SpeakButton text={letter.name} size="sm" />
+            <SpeakButton text={[SAY.findAsk, letter.name]} size="sm" />
           </div>
-          <p className="text-sm opacity-70">
-            {t.left}: <span className="font-bold tabular-nums">{totalTargets - found.size}</span>
-          </p>
+          <div className="flex gap-1.5 mt-1" aria-hidden>
+            {Array.from({ length: totalTargets }, (_, i) => (
+              <span
+                key={i}
+                className="w-3.5 h-3.5 rounded-full border-2 transition"
+                style={{ borderColor: ACCENT, background: i < found.size ? ACCENT : 'transparent' }}
+              />
+            ))}
+          </div>
         </div>
       </div>
 

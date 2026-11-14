@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { EndScreen, Feedback, GameShell, SpeakButton } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
 import { WORDS, Word } from '../data/words';
 import { VOWELS, Vowel, firstVowel, pick, sample, shuffle } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
-import { speak } from '../lib/speech';
+import { say } from '../lib/audio';
 
 const TOTAL = 8;
 const ACCENT = '#2bb673';
@@ -33,7 +33,6 @@ function makeRounds(): Round[] {
 }
 
 export default function VowelsGame({ onBack }: { onBack: () => void }) {
-  const { t, lang } = useI18n();
   const [seed, setSeed] = useState(0);
   const rounds = useMemo(() => makeRounds(), [seed]); // eslint-disable-line react-hooks/exhaustive-deps
   const q = useQuiz('vowels', TOTAL);
@@ -46,18 +45,18 @@ export default function VowelsGame({ onBack }: { onBack: () => void }) {
   useEffect(() => {
     setWrong([]);
     setSolved(false);
-  }, [q.round, seed]);
+    if (!q.done) void say(SAY.vowelsAsk, v.sound);
+  }, [q.round, seed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const choose = (w: Word) => {
-    speak(w.he);
-    if (solved || wrong.includes(w.he)) return;
+    if (solved || wrong.includes(w.he)) return void say(w.he);
     if (w.he === r.answer) {
       setSolved(true);
-      q.good();
+      q.good(w.he);
       setTimeout(q.next, 1500);
     } else {
       setWrong((x) => [...x, w.he]);
-      q.bad();
+      q.bad(w.he);
     }
   };
 
@@ -88,11 +87,11 @@ export default function VowelsGame({ onBack }: { onBack: () => void }) {
           >
             {v.sample}
           </div>
-          <span className="text-sm mt-2 font-semibold font-hebrew">{lang === 'he' ? v.nameHe : v.nameEs}</span>
+          <span className="text-sm mt-2 font-semibold font-hebrew">{v.name}</span>
         </div>
         <div className="flex items-center gap-2">
           <p className="text-lg sm:text-xl font-semibold">{t.vowelsAsk}</p>
-          <SpeakButton text={v.sample} size="sm" />
+          <SpeakButton text={[SAY.vowelsAsk, v.sound]} size="sm" />
         </div>
       </div>
 
@@ -117,7 +116,6 @@ export default function VowelsGame({ onBack }: { onBack: () => void }) {
             >
               <span className="text-6xl sm:text-7xl" aria-hidden>{w.emoji}</span>
               <span className="text-2xl sm:text-3xl font-bold font-hebrew">{w.he}</span>
-              {lang === 'es' && <span className="text-xs opacity-60">{w.es}</span>}
             </button>
           );
         })}

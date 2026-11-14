@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Check } from 'lucide-react';
 import { EndScreen, Feedback, GameShell, PrimaryButton, SpeakButton } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
 import { WORDS, Word } from '../data/words';
 import { LETTERS, LETTER_BY_CHAR } from '../data/letters';
 import { containsLetter, sample, shuffle } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
-import { speak } from '../lib/speech';
+import { say } from '../lib/audio';
 
 const TOTAL = 6;
 const CARDS = 6;
@@ -32,7 +32,6 @@ function makeRounds(): Round[] {
 }
 
 export default function InWordGame({ onBack }: { onBack: () => void }) {
-  const { t, lang } = useI18n();
   const [seed, setSeed] = useState(0);
   const rounds = useMemo(() => makeRounds(), [seed]); // eslint-disable-line react-hooks/exhaustive-deps
   const q = useQuiz('inword', TOTAL);
@@ -47,7 +46,7 @@ export default function InWordGame({ onBack }: { onBack: () => void }) {
     setMarked(new Set());
     setErrors(new Set());
     setSolved(false);
-    if (!q.done) speak(letter.name);
+    if (!q.done) void say(SAY.inWordAsk, letter.name);
   }, [q.round, seed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggle = (i: number) => {
@@ -57,6 +56,7 @@ export default function InWordGame({ onBack }: { onBack: () => void }) {
     else m.add(i);
     setMarked(m);
     setErrors(new Set());
+    if (!marked.has(i)) void say(r.words[i].he);
   };
 
   const check = () => {
@@ -100,7 +100,8 @@ export default function InWordGame({ onBack }: { onBack: () => void }) {
         >
           {r.target}
         </div>
-        <p className="text-lg sm:text-xl font-semibold">{t.inWordAsk(r.target)}</p>
+        <p className="text-lg sm:text-xl font-semibold">{t.inWordAsk} {r.target}</p>
+        <SpeakButton text={[SAY.inWordAsk, letter.name]} size="sm" />
       </div>
 
       <Feedback kind={q.feedback} id={q.fbId} />
@@ -135,7 +136,6 @@ export default function InWordGame({ onBack }: { onBack: () => void }) {
                 </span>
                 <SpeakButton text={w.he} size="sm" />
               </div>
-              {lang === 'es' && <span className="text-xs opacity-60">{w.es}</span>}
             </div>
           );
         })}

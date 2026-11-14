@@ -1,5 +1,8 @@
 import { useCallback, useState } from 'react';
 import { sfx } from './sfx';
+import { say } from './audio';
+import { SAY } from '../strings';
+import { pick } from './hebrew';
 import { saveStars, starsFor } from './progress';
 
 /** Estado común de los juegos por rondas: ronda actual, aciertos, errores y mensaje. */
@@ -14,14 +17,18 @@ export function useQuiz(gameId: string, total: number) {
   // Si el primer intento de la ronda fue correcto, cuenta como acierto.
   const [missedThisRound, setMissedThisRound] = useState(false);
 
-  const good = useCallback(() => {
+  /** Acierto: sonido + (frases opcionales) + un elogio. */
+  const good = useCallback((...before: string[]) => {
     sfx.correct();
+    void say(...before, pick(SAY.praise));
     setFeedback('good');
     setFbId((i) => i + 1);
   }, []);
 
-  const bad = useCallback(() => {
+  /** Error: sonido + (frases opcionales) + "נסו שוב". */
+  const bad = useCallback((...before: string[]) => {
     sfx.wrong();
+    void say(...before, SAY.tryAgain);
     setFeedback('bad');
     setFbId((i) => i + 1);
     setMistakes((m) => m + 1);

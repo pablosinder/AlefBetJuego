@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Eraser, Check } from 'lucide-react';
 import { Confetti, Feedback, GameShell, PrimaryButton, SpeakButton } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
 import { LETTERS, FINAL_LETTERS } from '../data/letters';
 import { saveStars } from '../lib/progress';
 import { sfx } from '../lib/sfx';
-import { speak } from '../lib/speech';
+import { pick } from '../lib/hebrew';
+import { say } from '../lib/audio';
 
 const ACCENT = '#f5b014';
 const EDGE = '#c98c00';
@@ -34,7 +35,6 @@ function placeLetter(ctx: CanvasRenderingContext2D, char: string, size: number) 
 }
 
 export default function WritingGame({ onBack }: { onBack: () => void }) {
-  const { t } = useI18n();
   const [groupId, setGroupId] = useState<1 | 2 | 3>(1);
   const [idx, setIdx] = useState(0);
   const [done, setDone] = useState<Set<string>>(new Set());
@@ -119,10 +119,14 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
     };
   }, [resetCanvas, drawGuide]);
 
+  const firstSay = useRef(true);
   useEffect(() => {
     setHint(null);
     setFeedback(null);
-  }, [item.char]);
+    // La primera vez se explica qué hacer; después solo se dice la letra.
+    void (firstSay.current ? say(SAY.writeAsk, item.name) : say(item.name));
+    firstSay.current = false;
+  }, [item.char]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const pos = (e: React.PointerEvent) => {
     const rect = canvasRef.current!.getBoundingClientRect();
@@ -225,11 +229,11 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
     setFbId((i) => i + 1);
     if (coverage >= 0.6 && outRatio <= 0.3) {
       sfx.correct();
+      void say(item.name, pick(SAY.praise));
       setFeedback('good');
       setHint(null);
       const nd = new Set(done).add(item.char);
       setDone(nd);
-      speak(item.name);
       const groupDone = group.items.every((x) => nd.has(x.char));
       if (groupDone) {
         saveStars('write', 3);
@@ -246,11 +250,13 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
           resetCanvas();
           drawGuide();
         }
-      }, 1100);
+      }, 2000);
     } else {
       sfx.wrong();
       setFeedback('bad');
-      setHint(outRatio > 0.3 ? t.writeOutside : t.writeMore);
+      const h = outRatio > 0.3 ? t.writeOutside : t.writeMore;
+      setHint(h);
+      void say(h);
     }
   };
 
@@ -304,7 +310,7 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
       <div className="flex items-center justify-center gap-2 mb-2">
         <p className="font-semibold">{t.writeAsk}</p>
         <span className="text-xl font-bold font-hebrew" dir="rtl">{item.name}</span>
-        <SpeakButton text={item.name} size="sm" />
+        <SpeakButton text={[SAY.writeAsk, item.name]} size="sm" />
       </div>
 
       <div ref={wrapRef} className="w-full max-w-[420px] mx-auto">

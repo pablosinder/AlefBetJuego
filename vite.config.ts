@@ -7,5 +7,5 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ['lucide-react'],
   },
-  base: '/AlefBetJuego',
+  base: './', // rutas relativas: funciona en Vercel (raíz del dominio)
 });

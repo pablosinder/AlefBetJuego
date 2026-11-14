@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>קוֹלוֹת הַמִּשְׂחָק</title>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+      :root { --bg: #fff8ee; --card: #fff; --ink: #2b2350; --line: #efe3cf; --accent: #ff8a3d; }
+      @media (prefers-color-scheme: dark) {
+        :root { --bg: #1d1a2b; --card: #2a2640; --ink: #f3eefc; --line: #3d3858; }
+      }
+      body { margin: 0; background: var(--bg); color: var(--ink); font-family: Rubik, Arial, sans-serif; }
+      main { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
+      h1 { margin: 0 0 4px; }
+      p.sub { margin: 0 0 16px; opacity: 0.7; }
+      .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+      button { font: inherit; cursor: pointer; border-radius: 12px; border: 2px solid var(--line); background: var(--card); color: var(--ink); padding: 8px 14px; }
+      button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 700; }
+      ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+      li { display: flex; align-items: center; gap: 12px; background: var(--card); border: 2px solid var(--line); border-radius: 14px; padding: 8px 12px; }
+      li.playing { border-color: var(--accent); }
+      li .t { flex: 1; font-size: 1.4rem; font-weight: 700; }
+      li .id { font-family: monospace; font-size: 0.8rem; opacity: 0.5; direction: ltr; }
+      .empty { padding: 24px; text-align: center; opacity: 0.7; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>קוֹלוֹת הַמִּשְׂחָק</h1>
+      <p class="sub" id="count"></p>
+      <div class="bar">
+        <button class="primary" id="all">▶ לְהַשְׁמִיעַ הַכֹּל</button>
+        <button id="stop">■ עֲצִירָה</button>
+      </div>
+      <ul id="list"></ul>
+    </main>
+    <script>
+      const audio = new Audio();
+      let queue = [];
+      const list = document.getElementById('list');
+      function play(li) {
+        document.querySelectorAll('li.playing').forEach((x) => x.classList.remove('playing'));
+        li.classList.add('playing');
+        li.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        audio.src = 'audio/' + li.dataset.id + '.mp3';
+        audio.play();
+      }
+      audio.onended = () => {
+        if (queue.length) play(queue.shift());
+        else document.querySelectorAll('li.playing').forEach((x) => x.classList.remove('playing'));
+      };
+      document.getElementById('all').onclick = () => {
+        queue = [...list.children];
+        if (queue.length) play(queue.shift());
+      };
+      document.getElementById('stop').onclick = () => {
+        queue = [];
+        audio.pause();
+      };
+      fetch('audio/catalog.json')
+        .then((r) => r.json())
+        .then((catalog) => {
+          const entries = Object.entries(catalog);
+          document.getElementById('count').textContent = entries.length + ' הַקְלָטוֹת';
+          if (!entries.length) {
+            list.innerHTML = '<li class="empty">עֲדַיִן אֵין הַקְלָטוֹת</li>';
+            return;
+          }
+          for (const [id, text] of entries) {
+            const li = document.createElement('li');
+            li.dataset.id = id;
+            const b = document.createElement('button');
+            b.textContent = '▶';
+            b.onclick = () => { queue = []; play(li); };
+            const t = document.createElement('span');
+            t.className = 't';
+            t.textContent = text;
+            const s = document.createElement('span');
+            s.className = 'id';
+            s.textContent = id;
+            li.append(b, t, s);
+            list.append(li);
+          }
+        });
+    </script>
+  </body>
+</html>

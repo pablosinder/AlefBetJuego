@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 import { EndScreen, Feedback, GameShell, SpeakButton } from '../components/ui';
-import { useI18n } from '../i18n';
+import { t, SAY } from '../strings';
 import { WORDS, Word } from '../data/words';
 import { LETTERS, LETTER_BY_CHAR } from '../data/letters';
 import { firstClusterLength, firstLetter, sample, shuffle } from '../lib/hebrew';
-import { speak } from '../lib/speech';
+import { say } from '../lib/audio';
 import { useQuiz } from '../lib/useQuiz';
 
 const TOTAL = 10;
@@ -35,7 +35,6 @@ function makeRounds(): Round[] {
 }
 
 export default function FirstLetterGame({ onBack }: { onBack: () => void }) {
-  const { t, lang } = useI18n();
   const [seed, setSeed] = useState(0);
   const rounds = useMemo(() => makeRounds(), [seed]); // eslint-disable-line react-hooks/exhaustive-deps
   const q = useQuiz('first', TOTAL);
@@ -47,15 +46,14 @@ export default function FirstLetterGame({ onBack }: { onBack: () => void }) {
   useEffect(() => {
     setWrong([]);
     setSolved(false);
-    if (!q.done) speak(r.word.he);
+    if (!q.done) void (q.round === 0 ? say(SAY.firstAsk, r.word.he) : say(r.word.he));
   }, [q.round, seed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const choose = (c: string) => {
     if (solved || wrong.includes(c)) return;
     if (c === r.answer) {
       setSolved(true);
-      q.good();
-      speak(r.word.he);
+      q.good(r.word.he);
       setTimeout(q.next, 1500);
     } else {
       setWrong((w) => [...w, c]);
@@ -84,7 +82,10 @@ export default function FirstLetterGame({ onBack }: { onBack: () => void }) {
 
   return (
     <GameShell title={t.gFirstTitle} onBack={onBack} accent={ACCENT} progress={{ current: q.round, total: TOTAL }}>
-      <p className="text-center text-lg sm:text-xl font-semibold mb-4">{t.firstAsk}</p>
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <p className="text-lg sm:text-xl font-semibold">{t.firstAsk}</p>
+        <SpeakButton text={[SAY.firstAsk, r.word.he]} size="sm" />
+      </div>
 
       <div key={q.round} className="anim-pop mx-auto bg-white rounded-3xl border-2 border-[#dfe6ff] shadow-[0_6px_0_#c9d5ff] w-full max-w-sm p-6 flex flex-col items-center gap-3">
         <div className="text-8xl sm:text-9xl" aria-hidden>{r.word.emoji}</div>
@@ -101,7 +102,6 @@ export default function FirstLetterGame({ onBack }: { onBack: () => void }) {
           </span>
           <SpeakButton text={r.word.he} />
         </div>
-        {lang === 'es' && <span className="text-sm opacity-60">{r.word.es}</span>}
       </div>
 
       <Feedback kind={q.feedback} id={q.fbId} />

@@ -65,12 +65,12 @@ export function firstVowel(word: string): Vowel | null {
   return null;
 }
 
-export const VOWELS: { id: Vowel; sample: string; nameHe: string; nameEs: string }[] = [
-  { id: 'a', sample: 'אַ', nameHe: 'קָמָץ / פַּתָּח', nameEs: 'kamatz / pataj' },
-  { id: 'e', sample: 'אֶ', nameHe: 'סֶגּוֹל / צֵירֵה', nameEs: 'segol / tzeire' },
-  { id: 'i', sample: 'אִ', nameHe: 'חִירִיק', nameEs: 'jirik' },
-  { id: 'o', sample: 'אוֹ', nameHe: 'חוֹלָם', nameEs: 'jolam' },
-  { id: 'u', sample: 'אוּ', nameHe: 'שׁוּרוּק / קֻבּוּץ', nameEs: 'shuruk / kubutz' },
+export const VOWELS: { id: Vowel; sample: string; sound: string; name: string }[] = [
+  { id: 'a', sample: 'אַ', sound: 'אַ', name: 'קָמָץ / פַּתָּח' },
+  { id: 'e', sample: 'אֶ', sound: 'אֶה', name: 'סֶגּוֹל / צֵירֵה' },
+  { id: 'i', sample: 'אִ', sound: 'אִי', name: 'חִירִיק' },
+  { id: 'o', sample: 'אוֹ', sound: 'אוֹ', name: 'חוֹלָם' },
+  { id: 'u', sample: 'אוּ', sound: 'אוּ', name: 'שׁוּרוּק / קֻבּוּץ' },
 ];
 
 export function shuffle<T>(arr: readonly T[]): T[] {
