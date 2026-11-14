@@ -39,6 +39,7 @@ export function allPhrases(): Phrase[] {
       SAY.partsAsk,
       SAY.completeAsk,
       SAY.connectAsk,
+      SAY.catchAsk,
       ...SAY.gameTitles,
     ].map((text) => ({ text, kind: 'sentence' as const })),
   ];

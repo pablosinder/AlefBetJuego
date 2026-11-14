@@ -29,6 +29,7 @@ export const t = {
   gPartsTitle: 'חֶלְקֵי הַדִּבּוּר',
   gCompleteTitle: 'הַשְׁלִימוּ אֶת הַמִּלָּה',
   gConnectTitle: 'חַבְּרוּ בְּקַו',
+  gCatchTitle: 'תּוֹפְסִים אוֹתִיּוֹת',
 
   lettersHint: 'לַחֲצוּ עַל אוֹת כְּדֵי לִשְׁמֹעַ',
   finalLetters: 'אוֹתִיּוֹת סוֹפִיּוֹת',
@@ -46,6 +47,7 @@ export const t = {
   partsAsk: 'לְאֵיזוֹ קְבוּצָה שַׁיֶּכֶת הַמִּלָּה?',
   completeAsk: 'אֵיזוֹ אוֹת חֲסֵרָה בַּמִּלָּה?',
   connectAsk: 'חַבְּרוּ כׇּל תְּמוּנָה לָאוֹת שֶׁבָּהּ הִיא מַתְחִילָה',
+  catchAsk: 'תִּפְסוּ בַּסַּל אֶת הָאוֹתִיּוֹת שֶׁל הַמִּלָּה, לְפִי הַסֵּדֶר',
   showDefs: 'מָה זֶה?',
 };
 
@@ -98,6 +100,7 @@ export const SAY = {
   partsAsk: t.partsAsk,
   completeAsk: t.completeAsk,
   connectAsk: t.connectAsk,
+  catchAsk: t.catchAsk,
   gameTitles: [
     t.gLettersTitle,
     t.gFirstTitle,
@@ -108,5 +111,6 @@ export const SAY = {
     t.gPartsTitle,
     t.gCompleteTitle,
     t.gConnectTitle,
+    t.gCatchTitle,
   ],
 };

@@ -16,6 +16,7 @@ import WritingGame from './games/WritingGame';
 import SpeechPartsGame from './games/SpeechPartsGame';
 import CompleteWordGame from './games/CompleteWordGame';
 import ConnectGame from './games/ConnectGame';
+import CatchLettersGame from './games/CatchLettersGame';
 
 interface GameDef {
   id: string;
@@ -35,6 +36,7 @@ const GAMES: GameDef[] = [
   { id: 'write', title: t.gWriteTitle, glyph: '✏️', color: '#f5b014', edge: '#c98c00', Component: WritingGame },
   { id: 'complete', title: t.gCompleteTitle, glyph: 'אַ_', color: '#e8590c', edge: '#b8460a', Component: CompleteWordGame },
   { id: 'connect', title: t.gConnectTitle, glyph: '🔗', color: '#0ea5e9', edge: '#0369a1', Component: ConnectGame },
+  { id: 'catch', title: t.gCatchTitle, glyph: '🧺', color: '#7c3aed', edge: '#5b21b6', Component: CatchLettersGame },
   { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', Component: SpeechPartsGame },
 ];
 
