@@ -21,6 +21,8 @@ export const t = {
   gVowelsTitle: 'תְּנוּעוֹת',
   gWriteTitle: 'כְּתִיבַת אוֹתִיּוֹת',
   gPartsTitle: 'חֶלְקֵי הַדִּבּוּר',
+  gCompleteTitle: 'הַשְׁלִימוּ אֶת הַמִּלָּה',
+  gConnectTitle: 'חַבְּרוּ בְּקַו',
 
   lettersHint: 'לַחֲצוּ עַל אוֹת כְּדֵי לִשְׁמֹעַ',
   finalLetters: 'אוֹתִיּוֹת סוֹפִיּוֹת',
@@ -36,6 +38,8 @@ export const t = {
   writeMore: 'כִּמְעַט! כַּסּוּ עוֹד קְצָת מֵהָאוֹת',
   writeOutside: 'נַסּוּ לִכְתֹּב בְּתוֹךְ הָאוֹת',
   partsAsk: 'לְאֵיזוֹ קְבוּצָה שַׁיֶּכֶת הַמִּלָּה?',
+  completeAsk: 'אֵיזוֹ אוֹת חֲסֵרָה בַּמִּלָּה?',
+  connectAsk: 'חַבְּרוּ כׇּל תְּמוּנָה לָאוֹת שֶׁבָּהּ הִיא מַתְחִילָה',
   showDefs: 'מָה זֶה?',
 };
 
@@ -55,6 +59,8 @@ export const SAY = {
   writeMore: t.writeMore,
   writeOutside: t.writeOutside,
   partsAsk: t.partsAsk,
+  completeAsk: t.completeAsk,
+  connectAsk: t.connectAsk,
   gameTitles: [
     t.gLettersTitle,
     t.gFirstTitle,
@@ -63,5 +69,7 @@ export const SAY = {
     t.gVowelsTitle,
     t.gWriteTitle,
     t.gPartsTitle,
+    t.gCompleteTitle,
+    t.gConnectTitle,
   ],
 };

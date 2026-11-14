@@ -14,6 +14,8 @@ import InWordGame from './games/InWordGame';
 import VowelsGame from './games/VowelsGame';
 import WritingGame from './games/WritingGame';
 import SpeechPartsGame from './games/SpeechPartsGame';
+import CompleteWordGame from './games/CompleteWordGame';
+import ConnectGame from './games/ConnectGame';
 
 interface GameDef {
   id: string;
@@ -31,6 +33,8 @@ const GAMES: GameDef[] = [
   { id: 'inword', title: t.gInWordTitle, glyph: '🔍', color: '#8b5cf6', edge: '#6a3fd1', Component: InWordGame },
   { id: 'vowels', title: t.gVowelsTitle, glyph: 'אַ', color: '#2bb673', edge: '#1f8f58', Component: VowelsGame },
   { id: 'write', title: t.gWriteTitle, glyph: '✏️', color: '#f5b014', edge: '#c98c00', Component: WritingGame },
+  { id: 'complete', title: t.gCompleteTitle, glyph: 'אַ_', color: '#e8590c', edge: '#b8460a', Component: CompleteWordGame },
+  { id: 'connect', title: t.gConnectTitle, glyph: '🔗', color: '#0ea5e9', edge: '#0369a1', Component: ConnectGame },
   { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', Component: SpeechPartsGame },
 ];
 
