@@ -1,65 +1,99 @@
-// Reproduce las voces grabadas (public/audio/<id>.mp3).
-// Si una frase no tiene archivo, usa la voz en hebreo del navegador.
+// Reproduce las voces grabadas (public/audio/<id>.mp3) con Web Audio.
+// Web Audio, una vez activado con un toque, reproduce sin restricciones en iPhone/iPad
+// y Android, también cuando la voz arranca sola (instrucciones al empezar una ronda).
+// Si una frase no tiene grabación, se usa la voz en hebreo del dispositivo.
 import { clipId } from './clipId';
 
 const BASE = `${import.meta.env.BASE_URL}audio/`;
 
-let available: Set<string> | null = null;
-const ready: Promise<void> = fetch(`${BASE}catalog.json`)
-  .then((r) => (r.ok ? r.json() : {}))
-  .then((catalog: Record<string, string>) => {
-    available = new Set(Object.keys(catalog));
-  })
-  .catch(() => {
-    available = new Set();
-  });
+let ctx: AudioContext | null = null;
 
-// Un solo elemento <audio> reutilizado: en iOS queda "desbloqueado" tras el primer toque.
-const player = typeof Audio !== 'undefined' ? new Audio() : null;
-let token = 0;
-
-export function hasClip(text: string): boolean {
-  return !!available?.has(clipId(text));
+/** Contexto de audio compartido (voces y efectos). */
+export function audioContext(): AudioContext | null {
+  try {
+    if (!ctx) {
+      const AC =
+        window.AudioContext ||
+        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      ctx = new AC();
+    }
+    if (ctx.state !== 'running') void ctx.resume().catch(() => {});
+    return ctx;
+  } catch {
+    return null;
+  }
 }
 
 /** Debe llamarse dentro de un toque del usuario para habilitar el audio. */
 export function unlockAudio() {
-  if (!player) return;
-  player.muted = true;
-  player.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQxAADB8AhSmxhIIEVCSiJrDCQBTcu3UrAIwUdkRgQbFAZC1CQEwTJ9mjRvBA4UOLD8nKVOWfh+UlK3z/177OXrfOdKl7pyn3Xf//WreyTRUoAWgBgkOAGbZHBgG1OF6zM82DWbZaUmMBptgQhGjsyYqc9ae9XFz280948NMBWInljyzsNRFLPWdnZGWrddDsjK1unuSrVN9jJsK8KuQtQCtMBjCEtImISdNKJOopIpBFpNSMbIHCSRpRR5iakjTiyzLhchUUBwCgyKiweBv/7UsQbg8isVNoMPMjAAAA0gAAABEVFGmgqK////9bP/6XCykxBTUUzLjEwMKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq';
-  player.play().then(
-    () => {
-      player.pause();
-      player.muted = false;
-    },
-    () => {
-      player.muted = false;
-    },
-  );
+  const c = audioContext();
+  if (c) {
+    // Un sonido vacío dentro del toque desbloquea el audio en iOS.
+    const src = c.createBufferSource();
+    src.buffer = c.createBuffer(1, 1, 22050);
+    src.connect(c.destination);
+    src.start(0);
+  }
   if ('speechSynthesis' in window) {
-    // también "despierta" la síntesis de voz en iOS
     window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
   }
 }
 
+// Grabaciones ya descargadas y decodificadas (null = no existe).
+const buffers = new Map<string, Promise<AudioBuffer | null>>();
+
+function decode(c: AudioContext, data: ArrayBuffer): Promise<AudioBuffer> {
+  // Forma con callbacks: compatible con Safari antiguo.
+  return new Promise((resolve, reject) => c.decodeAudioData(data, resolve, reject));
+}
+
+function load(id: string): Promise<AudioBuffer | null> {
+  let p = buffers.get(id);
+  if (!p) {
+    p = fetch(`${BASE}${id}.mp3`)
+      .then((r) => (r.ok && (r.headers.get('content-type') ?? '').includes('audio') ? r.arrayBuffer() : null))
+      .then((data) => {
+        const c = audioContext();
+        return data && c ? decode(c, data) : null;
+      })
+      .catch(() => null);
+    buffers.set(id, p);
+  }
+  return p;
+}
+
+/** Descarga por adelantado para que no haya demora al hablar. */
+export function preload(texts: string[]) {
+  for (const t of texts) void load(clipId(t));
+}
+
+let token = 0;
+let current: AudioBufferSourceNode | null = null;
+
 export function stopAudio() {
   token++;
-  player?.pause();
+  try {
+    current?.stop();
+  } catch {
+    // ya terminó
+  }
+  current = null;
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
 }
 
-function playClip(id: string, my: number): Promise<void> {
+function playBuffer(buf: AudioBuffer, my: number): Promise<void> {
   return new Promise((resolve) => {
-    if (!player || my !== token) return resolve();
-    const done = () => {
-      player.onended = null;
-      player.onerror = null;
+    const c = audioContext();
+    if (!c || my !== token) return resolve();
+    const src = c.createBufferSource();
+    src.buffer = buf;
+    src.connect(c.destination);
+    src.onended = () => {
+      if (current === src) current = null;
       resolve();
     };
-    player.onended = done;
-    player.onerror = done;
-    player.src = `${BASE}${id}.mp3`;
-    player.play().catch(done);
+    current = src;
+    src.start(0);
   });
 }
 
@@ -84,11 +118,12 @@ function speakTTS(text: string, my: number): Promise<void> {
 export async function say(...texts: string[]): Promise<void> {
   stopAudio();
   const my = token;
-  await ready;
-  for (const text of texts) {
+  // Empezar a descargar todas a la vez.
+  const pending = texts.map((t) => load(clipId(t)));
+  for (const [i, text] of texts.entries()) {
+    const buf = await pending[i];
     if (my !== token) return;
-    const id = clipId(text);
-    if (available?.has(id)) await playClip(id, my);
+    if (buf) await playBuffer(buf, my);
     else await speakTTS(text, my);
   }
 }
