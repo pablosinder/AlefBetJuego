@@ -16,6 +16,15 @@ Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está
 
 Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 
+## Premios y efectos
+
+- **Efectos** (`src/lib/fx.ts`, `src/lib/sfx.ts`, `src/lib/juice.ts`): partículas, fuegos artificiales, papelitos y sonidos sintetizados. Cada acierto seguido sube el tono y agranda la explosión (racha 🔥).
+- **Gemas 💎 y nivel 👑**: cada acierto da gemas (más con racha) y las estrellas del final dan un extra; las gemas suben el nivel.
+- **Regalo 🎁 y álbum 📒**: al terminar un juego se abre una caja con una figurita nueva (36 en total).
+- **Días seguidos 🔥**: se muestra a partir del segundo día. Nunca se pierde nada por equivocarse o por no jugar.
+- **Música** de fondo solo en el menú, con botón para apagarla. El menú de padres también borra gemas y figuritas al reiniciar.
+- Con *reducir movimiento* activado en el dispositivo, las animaciones se apagan.
+
 ## Modo niño
 
 - Al abrir aparece un botón grande **בּוֹאוּ נְשַׂחֵק!** que activa la pantalla completa y el audio.

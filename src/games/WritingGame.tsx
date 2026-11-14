@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Eraser, Check } from 'lucide-react';
-import { Confetti, Feedback, GameShell, PrimaryButton, SpeakButton } from '../components/ui';
+import { Feedback, GameShell, PrimaryButton, SpeakButton } from '../components/ui';
 import { t, SAY } from '../strings';
 import { LETTERS, FINAL_LETTERS } from '../data/letters';
 import { saveStars } from '../lib/progress';
-import { sfx } from '../lib/sfx';
+import { rewards } from '../lib/rewards';
+import { juice } from '../lib/juice';
 import { cheer } from '../lib/cheer';
 import { say } from '../lib/audio';
 
@@ -42,7 +43,6 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
   const [fbId, setFbId] = useState(0);
   const [hint, setHint] = useState<string | null>(null);
   const [praise, setPraise] = useState('');
-  const [party, setParty] = useState(false);
 
   const group = GROUPS.find((g) => g.id === groupId)!;
   const item = group.items[idx];
@@ -229,7 +229,7 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
     const { coverage, outRatio } = evaluate();
     setFbId((i) => i + 1);
     if (coverage >= 0.6 && outRatio <= 0.3) {
-      sfx.correct();
+      juice.correct();
       const praise = cheer.praise();
       void say(item.name, praise);
       setPraise(praise);
@@ -240,9 +240,8 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
       const groupDone = group.items.every((x) => nd.has(x.char));
       if (groupDone) {
         saveStars('write', 3);
-        sfx.win();
-        setParty(true);
-        setTimeout(() => setParty(false), 3500);
+        juice.win();
+        setTimeout(() => rewards.offerGift(), 1800);
       }
       setTimeout(() => {
         const nextIdx = group.items.findIndex((x, i) => i > idx && !nd.has(x.char));
@@ -255,7 +254,7 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
         }
       }, 2000);
     } else {
-      sfx.wrong();
+      juice.wrong();
       setFeedback('bad');
       const h = outRatio > 0.3 ? t.writeOutside : t.writeMore;
       setHint(h);
@@ -271,7 +270,6 @@ export default function WritingGame({ onBack }: { onBack: () => void }) {
 
   return (
     <GameShell title={t.gWriteTitle} onBack={onBack} accent={ACCENT}>
-      {party && <Confetti />}
       {/* Grupos */}
       <div className="flex gap-2 justify-center mb-3">
         {GROUPS.map((g) => (

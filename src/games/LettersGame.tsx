@@ -5,7 +5,8 @@ import { LETTERS, FINAL_LETTERS } from '../data/letters';
 import { firstClusterLength } from '../lib/hebrew';
 import { say } from '../lib/audio';
 import { saveStars } from '../lib/progress';
-import { sfx } from '../lib/sfx';
+import { rewards } from '../lib/rewards';
+import { juice } from '../lib/juice';
 
 interface Card {
   char: string;
@@ -27,7 +28,8 @@ export default function LettersGame({ onBack }: { onBack: () => void }) {
     if (!rewarded && LETTERS.every((l) => next.has(l.char))) {
       saveStars('letters', 3);
       setRewarded(true);
-      sfx.win();
+      juice.win();
+      setTimeout(() => rewards.offerGift(), 1800);
     }
   };
 

@@ -6,7 +6,7 @@ import { LETTER_BY_CHAR } from '../data/letters';
 import { firstLetter, sample, shuffle } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
 import { say } from '../lib/audio';
-import { sfx } from '../lib/sfx';
+import { juice } from '../lib/juice';
 
 const TOTAL = 5;
 const PAIRS = 4;
@@ -110,7 +110,7 @@ export default function ConnectGame({ onBack }: { onBack: () => void }) {
         q.good(word.he);
         setTimeout(q.next, 1800);
       } else {
-        sfx.correct();
+        juice.correct();
         void say(word.he);
       }
     } else {
