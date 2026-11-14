@@ -1,6 +1,6 @@
 # אָלֶף־בֵּית – Juegos para aprender hebreo
 
-Aplicación web para niños que empiezan a leer y escribir en hebreo. La interfaz está en **hebreo por defecto** (derecha a izquierda) y se puede cambiar a español con el botón de idioma.
+Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está en hebreo (derecha a izquierda) y las instrucciones se dicen en voz alta, pensado para una niña de 5 años que todavía no lee.
 
 ## Juegos
 
@@ -16,11 +16,37 @@ Aplicación web para niños que empiezan a leer y escribir en hebreo. La interfa
 
 Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 
-## Detalles
+## Modo niño
 
-- **Voz:** usa la síntesis de voz del navegador en hebreo (`he-IL`). Si el dispositivo no tiene voz en hebreo, se avisa en el menú y se puede jugar igual.
-- **Dibujos:** emojis, sin imágenes externas.
-- **Contenido:** está en `src/data/` (`letters.ts`, `words.ts`, `speechParts.ts`). Para agregar palabras basta con sumar entradas con niqqud; los juegos de vocales y letras las clasifican solos.
+- Al abrir aparece un botón grande **בּוֹאוּ נְשַׂחֵק!** que activa la pantalla completa y el audio.
+- El botón o gesto "atrás" del teléfono vuelve al menú en vez de salir de la página.
+- Cerrar o recargar la pestaña pide confirmación. Sin zoom, sin selección de texto, sin menú de pulsación larga; la pantalla no se apaga mientras se juega.
+- Si se sale de pantalla completa, el siguiente toque la vuelve a activar.
+- **Salida para padres:** mantener apretado 3 segundos el candado 🔒 del menú.
+- **iPhone:** Safari no permite pantalla completa en páginas web. Hay que abrir el sitio, tocar *Compartir → Agregar a inicio* y abrir el juego desde ese ícono: se abre sin barras del navegador. En Android también conviene *Agregar a pantalla principal*.
+
+## Voces
+
+El juego reproduce MP3 grabados de `public/audio/` (uno por frase, letra o palabra; el catálogo está en `public/audio/catalog.json`). Si falta alguno, usa la voz en hebreo del dispositivo.
+
+Para grabarlas con Gemini (necesita una clave de [Google AI Studio](https://aistudio.google.com/apikey) y `ffmpeg`):
+
+```bash
+GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs          # graba lo que falta
+GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all    # vuelve a grabar todo
+GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --only "אָלֶף"   # una sola frase
+GEMINI_VOICE=Kore GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all  # otra voz
+```
+
+Para escucharlas todas: abrir `/voces.html` en el sitio.
+
+## Contenido
+
+Está en `src/data/` (`letters.ts`, `words.ts`, `speechParts.ts`) y los textos en `src/strings.ts`. Para agregar palabras basta con sumar entradas con niqqud y volver a correr el script de voces.
+
+## Publicación en Vercel
+
+Vercel detecta Vite solo: *Build command* `npm run build`, *Output directory* `dist`. El sitio funciona desde la raíz del dominio.
 
 ## Desarrollo
 
@@ -28,5 +54,4 @@ Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 npm install
 npm run dev        # servidor local
 npm run build      # compilar a dist/
-npm run deploy     # publicar en GitHub Pages
 ```
