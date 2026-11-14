@@ -1,6 +1,8 @@
 # אָלֶף־בֵּית – Juegos para aprender hebreo
 
-Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está en hebreo (derecha a izquierda) y las instrucciones se dicen en voz alta, pensado para una niña de 5 años que todavía no lee.
+Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está en hebreo (de derecha a izquierda) y las instrucciones, letras y palabras se dicen en voz alta, pensado para una niña de 5 años que todavía no lee.
+
+**En línea:** https://alefbetjuego.vercel.app
 
 ## Juegos
 
@@ -11,10 +13,17 @@ Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está
 | **מִצְאוּ אֶת הָאוֹת** – Encontrá la letra | Marcar cada aparición de una letra entre letras parecidas | Hoja 1, ejercicio 1 (הַקִּיפוּ כׇּל אוֹת א) |
 | **אוֹת בַּמִּלָּה** – Letra en la palabra | Marcar los dibujos cuyo nombre tiene la letra | Hoja 1, ejercicio 4 |
 | **תְּנוּעוֹת** – Vocales | Elegir el dibujo cuyo nombre empieza con la vocal (אַ, אֶ, אִ, אוֹ, אוּ) | Hoja 2 (אָ, אַ) |
-| **כְּתִיבַת אוֹתִיּוֹת** – Escribir letras | Repasar la letra con el dedo o el mouse; se comprueba que el trazo cubra la letra. Grupos א–י, כ–ר, ש–ת + finales | Hojas de caligrafía 1, 2 y 5 |
+| **כְּתִיבַת אוֹתִיּוֹת** – Escribir letras | Repasar la letra con el dedo; se comprueba que el trazo cubra la letra. Grupos א–י, כ–ר, ש–ת + finales | Hojas de caligrafía 1, 2 y 5 |
+| **הַשְׁלִימוּ אֶת הַמִּלָּה** – Completar la palabra | Un dibujo y su palabra con una letra faltante; las opciones tienen la misma vocal | Hoja 8 (הַשְׁלִימוּ אֶת הַמִּלָּה עִם אָ אוֹ בָּ) |
+| **חַבְּרוּ בְּקַו** – Unir con líneas | Unir cada dibujo con su letra inicial, arrastrando el dedo o tocando uno y otro | Hoja 7 (חַבְּרוּ לְפִי הַהֲבָרָה) |
+| **תּוֹפְסִים אוֹתִיּוֹת** – Atrapar letras (arcade) | Mover una canasta para atrapar, en orden, las letras que caen y armar una palabra corta | — |
 | **חֶלְקֵי הַדִּבּוּר** – Partes de la oración | Clasificar palabras en שֵׁם עֶצֶם, שֵׁם תֹּאַר, פֹּעַל, תֹּאַר הַפֹּעַל | Hoja de partes de la oración |
 
 Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
+
+### Frases motivadoras
+
+Al acertar se dice un elogio al azar (14 distintos); al equivocarse, una frase de ánimo (6); con 3, 5, 8 y 12 rondas seguidas sin errores, una frase de racha; y al terminar un juego, una de 3 frases finales. Nunca se repite la misma dos veces seguidas, y el texto en pantalla es la misma frase que se escucha. Las listas están en `SAY` dentro de `src/strings.ts`.
 
 ## Modo niño
 
@@ -22,14 +31,42 @@ Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 - El botón o gesto "atrás" del teléfono vuelve al menú en vez de salir de la página.
 - Cerrar o recargar la pestaña pide confirmación. Sin zoom, sin selección de texto, sin menú de pulsación larga; la pantalla no se apaga mientras se juega.
 - Si se sale de pantalla completa, el siguiente toque la vuelve a activar.
-- **Salida para padres:** mantener apretado 3 segundos el candado 🔒 del menú.
+- **Menú de padres:** mantener apretado 3 segundos el candado 🔒 del menú. Permite:
+  - **אִפּוּס הַנִּקּוּד** – reiniciar la puntuación (borra todas las estrellas; pide un segundo toque de confirmación),
+  - **יְצִיאָה מֵהַמִּשְׂחָק** – salir del juego,
+  - **חֲזָרָה לַמִּשְׂחָק** – volver al juego.
 - **iPhone:** Safari no permite pantalla completa en páginas web. Hay que abrir el sitio, tocar *Compartir → Agregar a inicio* y abrir el juego desde ese ícono: se abre sin barras del navegador. En Android también conviene *Agregar a pantalla principal*.
 
 ## Voces
 
-El juego reproduce MP3 grabados de `public/audio/` (uno por frase, letra o palabra; el catálogo está en `public/audio/catalog.json`). Si falta alguno, usa la voz en hebreo del dispositivo.
+El juego reproduce MP3 grabados de `public/audio/` (uno por frase, letra o palabra; el catálogo está en `public/audio/catalog.json`) con Web Audio, y los precarga al tocar "empezar". Si falta alguno, usa la voz en hebreo del dispositivo. Para escucharlas todas: abrir **`/voces.html`** en el sitio.
 
-Para grabarlas con Gemini (necesita una clave de [Google AI Studio](https://aistudio.google.com/apikey) y `ffmpeg`):
+Para saber qué falta grabar:
+
+```bash
+node scripts/missing-voices.mjs   # lista las frases sin MP3 y las guarda en scripts/voice-batches/faltan.txt
+```
+
+### Grabar sin clave de API (Google AI Studio)
+
+Así se grabaron las voces actuales (voz de AI Studio):
+
+1. Abrir [aistudio.google.com/generate-speech](https://aistudio.google.com/generate-speech), un solo hablante, siempre **la misma voz**.
+2. En *Style instructions*:
+   ```
+   Read aloud in Hebrew with a warm, cheerful, clear voice, like a kindergarten teacher talking to a 5-year-old girl. Read each line once, exactly as written, following the niqqud. After each line, stay completely silent for 3 seconds before the next line. Do not add any words.
+   ```
+3. En el texto, pegar las líneas de `scripts/voice-batches/faltan.txt` (u otra tanda), descargar el audio.
+4. Cortarlo en un MP3 por frase:
+   ```bash
+   python3 scripts/align-recording.py grabacion.wav scripts/voice-batches/faltan.txt alineacion.json
+   node scripts/cut-from-alignment.mjs grabacion.wav alineacion.json   # --skip 3-5 para omitir líneas dudosas
+   ```
+   `align-recording.py` elige entre todos los silencios del audio los cortes que mejor coinciden con la duración esperada de cada frase, así que tolera pausas internas ("שָׁלוֹם! …") y pausas más cortas que lo pedido. Conviene revisar el resultado en `/voces.html`.
+
+### Grabar con la API de Gemini
+
+Con una clave de [Google AI Studio](https://aistudio.google.com/apikey) y `ffmpeg`:
 
 ```bash
 GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs          # graba lo que falta
@@ -38,15 +75,18 @@ GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --only "אָלֶף"   # una
 GEMINI_VOICE=Kore GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all  # otra voz
 ```
 
-Para escucharlas todas: abrir `/voces.html` en el sitio.
-
 ## Contenido
 
-Está en `src/data/` (`letters.ts`, `words.ts`, `speechParts.ts`) y los textos en `src/strings.ts`. Para agregar palabras basta con sumar entradas con niqqud y volver a correr el script de voces.
+- `src/data/letters.ts` – letras, nombres, palabra de ejemplo y letras parecidas (distractores).
+- `src/data/words.ts` – banco de palabras con dibujo (emoji). Los juegos de vocales, primera letra, completar y atrapar las clasifican solos según su niqqud.
+- `src/data/speechParts.ts` – partes de la oración.
+- `src/strings.ts` – textos de pantalla (`t`) y frases habladas (`SAY`).
+
+Para agregar palabras o frases basta con sumar entradas con niqqud, correr `node scripts/missing-voices.mjs` y grabar las que falten.
 
 ## Publicación en Vercel
 
-Vercel detecta Vite solo: *Build command* `npm run build`, *Output directory* `dist`. El sitio funciona desde la raíz del dominio.
+Proyecto **alefbetjuego** en Vercel (Vite: *Build command* `npm run build`, *Output directory* `dist`; el sitio funciona desde la raíz del dominio). Vercel todavía no tiene acceso al repositorio de GitHub, así que no se actualiza solo con cada cambio: cada versión se publica a mano desde `main`. Para que se actualice solo, darle acceso al repositorio desde vercel.com/new y conectar el proyecto.
 
 ## Desarrollo
 
@@ -54,4 +94,6 @@ Vercel detecta Vite solo: *Build command* `npm run build`, *Output directory* `d
 npm install
 npm run dev        # servidor local
 npm run build      # compilar a dist/
+npm run typecheck  # comprobar tipos
+npm run lint       # eslint
 ```
