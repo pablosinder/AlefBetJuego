@@ -21,6 +21,15 @@ import SpeechPartsGame from './games/SpeechPartsGame';
 import CompleteWordGame from './games/CompleteWordGame';
 import ConnectGame from './games/ConnectGame';
 import CatchLettersGame from './games/CatchLettersGame';
+import PathGame from './games/PathGame';
+import ColorGame from './games/ColorGame';
+import PositionGame from './games/PositionGame';
+import StartEndGame from './games/StartEndGame';
+import ListenGame from './games/ListenGame';
+import SortGame from './games/SortGame';
+import GenderGame from './games/GenderGame';
+import ReadGame from './games/ReadGame';
+import MazeGame from './games/MazeGame';
 
 interface GameDef {
   id: string;
@@ -32,6 +41,7 @@ interface GameDef {
 }
 
 const GAMES: GameDef[] = [
+  { id: 'path', title: t.gPathTitle, glyph: '🗺️', color: '#10b981', edge: '#047857', Component: PathGame },
   { id: 'letters', title: t.gLettersTitle, glyph: 'א', color: '#ff8a3d', edge: '#c85d1d', Component: LettersGame },
   { id: 'first', title: t.gFirstTitle, glyph: '🐫', color: '#4f7cff', edge: '#2b4fb8', Component: FirstLetterGame },
   { id: 'find', title: t.gFindTitle, glyph: 'ב', color: '#ef5da8', edge: '#c23f84', Component: FindLetterGame },
@@ -41,6 +51,14 @@ const GAMES: GameDef[] = [
   { id: 'complete', title: t.gCompleteTitle, glyph: 'אַ_', color: '#e8590c', edge: '#b8460a', Component: CompleteWordGame },
   { id: 'connect', title: t.gConnectTitle, glyph: '🔗', color: '#0ea5e9', edge: '#0369a1', Component: ConnectGame },
   { id: 'catch', title: t.gCatchTitle, glyph: '🧺', color: '#7c3aed', edge: '#5b21b6', Component: CatchLettersGame },
+  { id: 'color', title: t.gColorTitle, glyph: '🖍️', color: '#14b86a', edge: '#0e8a4f', Component: ColorGame },
+  { id: 'listen', title: t.gListenTitle, glyph: '👂', color: '#f43f5e', edge: '#be123c', Component: ListenGame },
+  { id: 'startend', title: t.gStartEndTitle, glyph: '⇆', color: '#d946ef', edge: '#a21caf', Component: StartEndGame },
+  { id: 'position', title: t.gPosTitle, glyph: '⚪', color: '#f97316', edge: '#c2560c', Component: PositionGame },
+  { id: 'sort', title: t.gSortTitle, glyph: '🗂️', color: '#0891b2', edge: '#0e6f86', Component: SortGame },
+  { id: 'maze', title: t.gMazeTitle, glyph: '🐭', color: '#ca8a04', edge: '#a16207', Component: MazeGame },
+  { id: 'read', title: t.gReadTitle, glyph: 'בָּ־נָ', color: '#6366f1', edge: '#4338ca', Component: ReadGame },
+  { id: 'gender', title: t.gGenderTitle, glyph: '🎀', color: '#ec4899', edge: '#be185d', Component: GenderGame },
   { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', Component: SpeechPartsGame },
 ];
 

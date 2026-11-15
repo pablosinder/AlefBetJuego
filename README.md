@@ -17,6 +17,15 @@ Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está
 | **הַשְׁלִימוּ אֶת הַמִּלָּה** – Completar la palabra | Un dibujo y su palabra con una letra faltante; las opciones tienen la misma vocal | Hoja 8 (הַשְׁלִימוּ אֶת הַמִּלָּה עִם אָ אוֹ בָּ) |
 | **חַבְּרוּ בְּקַו** – Unir con líneas | Unir cada dibujo con su letra inicial, arrastrando el dedo o tocando uno y otro | Hoja 7 (חַבְּרוּ לְפִי הַהֲבָרָה) |
 | **תּוֹפְסִים אוֹתִיּוֹת** – Atrapar letras (arcade) | Mover una canasta para atrapar, en orden, las letras que caen y armar una palabra corta | — |
+| **מַסְלוּל הָאוֹתִיּוֹת** – Ruta de letras | Una parada por letra, en el orden de las hojas: aprenderla (nombre, palabra y cómo se forma), buscarla y escuchar palabras que empiezan con ella. La siguiente se abre al terminar | Orden de las hojas de כיתה א |
+| **צִבְעוּ לְפִי הָאוֹת** – Pintar según la letra | Cada crayón es una letra con su color; al tocar una zona con esa letra se pinta | "צִבְעוּ לְפִי הַהוֹרָאוֹת" (casi todas las hojas) |
+| **שׁוֹמְעִים אוֹ לֹא?** – Solo con el oído | Dibujos sin la palabra escrita: marcar los que tienen el sonido | Hojas 4, 9, 20, 23, 36 |
+| **מַתְחִילָה אוֹ מִסְתַּיֶּמֶת** – Empieza o termina | Rondas alternadas: marcar las palabras que empiezan / terminan con el sonido | Hojas 6, 7, 13, 21, 26, 29, 32, 41, 46, 51 |
+| **אֵיפֹה הַצְּלִיל?** – ¿En qué sílaba? | Un círculo por sílaba; tocar el de la sílaba donde se oye la letra | Hojas 10, 15, 20, 38, 43 |
+| **מְמַיְּנִים לְסַלִּים** – Clasificar | Poner cada dibujo en la canasta de su primera (o última) letra | Hojas 7, 10, 15 |
+| **הַמָּבוֹךְ** – Laberinto | Llevar al ratón al queso pasando solo por dibujos que empiezan / terminan con la letra | Hoja 41 |
+| **קוֹרְאִים וּבוֹנִים** – Leer y armar | Leer por sílabas y elegir el dibujo; armar la palabra del dibujo con fichas | Hojas 35, 39, 50 |
+| **זָכָר וּנְקֵבָה** – Masculino y femenino | Elegir la forma femenina (סוּס → סוּסָה) y tocar la ה del final | Hoja 25 |
 | **חֶלְקֵי הַדִּבּוּר** – Partes de la oración | Clasificar palabras en שֵׁם עֶצֶם, שֵׁם תֹּאַר, פֹּעַל, תֹּאַר הַפֹּעַל | Hoja de partes de la oración |
 
 Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
@@ -89,6 +98,8 @@ GEMINI_VOICE=Kore GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all  # 
 - `src/data/letters.ts` – letras, nombres, palabra de ejemplo y letras parecidas (distractores).
 - `src/data/words.ts` – banco de palabras con dibujo (emoji). Los juegos de vocales, primera letra, completar y atrapar las clasifican solos según su niqqud.
 - `src/data/speechParts.ts` – partes de la oración.
+- `src/data/sheets.ts` – datos de las hojas de כיתה א: palabras en sílabas, parejas זָכָר/נְקֵבָה, colores y dibujos para pintar, cómo se forma cada letra, letras con dagesh y letra + קָמָץ/פַּתָּח.
+- `src/lib/sounds.ts` – con qué sonido empieza / termina una palabra (sin contar ה, א, ע, ו, י mudas).
 - `src/strings.ts` – textos de pantalla (`t`) y frases habladas (`SAY`).
 
 Para agregar palabras o frases basta con sumar entradas con niqqud, correr `node scripts/missing-voices.mjs` y grabar las que falten.

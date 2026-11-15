@@ -37,7 +37,12 @@ function makeRound(word: Word): Round | null {
   const letter = chosen.c[0];
   const similar = LETTER_BY_CHAR[letter].similar.filter((c) => LETTER_BY_CHAR[c] && c !== letter);
   const others = shuffle(LETTERS.map((l) => l.char).filter((c) => c !== letter && !similar.includes(c)));
-  const distractors = [...sample(similar, 1), ...others].slice(0, 3).map((l) => swapLetter(chosen.c, l));
+  // A veces, como en las hojas de vocales: la misma letra con otra vocal (בָּ / בִּ / בּוּ…).
+  const byVowel = vowelSwaps(chosen.c);
+  const distractors =
+    byVowel.length >= 3 && Math.random() < 0.4
+      ? sample(byVowel, 3)
+      : [...sample(similar, 1), ...others].slice(0, 3).map((l) => swapLetter(chosen.c, l));
   return {
     word,
     parts,
@@ -45,6 +50,24 @@ function makeRound(word: Word): Round | null {
     answer: chosen.c,
     options: shuffle([chosen.c, ...distractors]),
   };
+}
+
+// Una vocal por sonido: a, e, i, o, u.
+const VOWEL_MARKS: { sound: string; marks: string[]; use: string }[] = [
+  { sound: 'a', marks: ['ָ', 'ַ', 'ֲ'], use: 'ַ' },
+  { sound: 'e', marks: ['ֶ', 'ֵ', 'ֱ'], use: 'ֶ' },
+  { sound: 'i', marks: ['ִ'], use: 'ִ' },
+  { sound: 'o', marks: ['ֹ', 'ֺ', 'ֳ'], use: 'ֹ' },
+  { sound: 'u', marks: ['ֻ'], use: 'ֻ' },
+];
+
+/** La misma letra con las otras vocales (sin repetir el sonido de la respuesta). */
+function vowelSwaps(cluster: string): string[] {
+  const marks = [...cluster.slice(1)];
+  const current = VOWEL_MARKS.find((v) => marks.some((m) => v.marks.includes(m)));
+  if (!current) return [];
+  const keep = marks.filter((m) => !VOWEL_MARKS.some((v) => v.marks.includes(m))).join('');
+  return VOWEL_MARKS.filter((v) => v !== current).map((v) => cluster[0] + keep + v.use);
 }
 
 function makeRounds(): Round[] {

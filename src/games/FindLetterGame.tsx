@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { EndScreen, Feedback, GameShell, SpeakButton } from '../components/ui';
 import { t, SAY } from '../strings';
-import { LETTERS, LETTER_BY_CHAR } from '../data/letters';
+import { FINAL_LETTERS, LETTERS, LETTER_BY_CHAR } from '../data/letters';
+import { DAGESH_PAIRS, KAMATZ, PATACH, VOWEL_SYL_LETTERS, vowelSylName } from '../data/sheets';
 import { pick, sample, shuffle } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
 import { juice } from '../lib/juice';
@@ -13,24 +14,83 @@ const ACCENT = '#ef5da8';
 
 interface Round {
   target: string;
+  name: string; // lo que se dice: nombre de la letra, "בֵּית דְּגוּשָׁה", "גִּימֶל קָמָץ"…
   cells: string[];
 }
 
+function fill(target: string, nTargets: number, filler: () => string): Round['cells'] {
+  const fillers: string[] = [];
+  while (fillers.length < CELLS - nTargets) {
+    const c = filler();
+    if (c !== target) fillers.push(c);
+  }
+  return shuffle([...Array(nTargets).fill(target), ...fillers]);
+}
+
 // Como en la hoja: "הַקִּיפוּ כׇּל אוֹת א" en una fila de letras mezcladas.
+function letterRound(l: (typeof LETTERS)[number]): Round {
+  const similar = l.similar.filter((c) => LETTER_BY_CHAR[c]);
+  return {
+    target: l.char,
+    name: l.name,
+    cells: fill(l.char, 5 + Math.floor(Math.random() * 3), () =>
+      Math.random() < 0.5 && similar.length ? pick(similar) : pick(LETTERS).char,
+    ),
+  };
+}
+
+// Hojas 5, 37, 39: "הַקִּיפוּ כׇּל אוֹת בֵּית דְּגוּשָׁה / בֵּית רָפָה".
+function dageshRound(): Round {
+  const d = pick(DAGESH_PAIRS);
+  const withDagesh = Math.random() < 0.5;
+  const others = DAGESH_PAIRS.filter((x) => x !== d).flatMap((x) => [x.with, x.without]);
+  return {
+    target: withDagesh ? d.with : d.without,
+    name: withDagesh ? d.withName : d.withoutName,
+    cells: fill(withDagesh ? d.with : d.without, 5 + Math.floor(Math.random() * 2), () =>
+      Math.random() < 0.6 ? (withDagesh ? d.without : d.with) : pick(others),
+    ),
+  };
+}
+
+// Hoja 37: "הַקִּיפוּ כׇּל אוֹת ך" entre letras parecidas.
+const FINAL_LOOKALIKE: Record<string, string[]> = {
+  'ך': ['כ', 'ר', 'ד', 'ן'],
+  'ם': ['מ', 'ס', 'ט'],
+  'ן': ['נ', 'ו', 'ז', 'ך'],
+  'ף': ['פ', 'כ', 'ך'],
+  'ץ': ['צ', 'ע', 'ג'],
+};
+function finalRound(): Round {
+  const f = pick(FINAL_LETTERS);
+  return {
+    target: f.char,
+    name: f.name,
+    cells: fill(f.char, 5 + Math.floor(Math.random() * 2), () => pick(FINAL_LOOKALIKE[f.char])),
+  };
+}
+
+// Hojas 8, 12, 16, 18: "הַקִּיפוּ כׇּל בָּ בְּכָחֹל וְכׇל בַּ בְּיָרֹק" — letra con קָמָץ o פַּתָּח.
+function vowelRound(): Round {
+  const l = pick(VOWEL_SYL_LETTERS);
+  const mark = Math.random() < 0.5 ? KAMATZ : PATACH;
+  const other = mark === KAMATZ ? PATACH : KAMATZ;
+  const target = l.char + mark;
+  const near = VOWEL_SYL_LETTERS.filter((x) => x !== l).map((x) => x.char);
+  return {
+    target,
+    name: vowelSylName(l.name, mark),
+    cells: fill(target, 5 + Math.floor(Math.random() * 2), () => {
+      const r = Math.random();
+      if (r < 0.45) return l.char + other;
+      return pick(near) + (r < 0.75 ? mark : other);
+    }),
+  };
+}
+
 function makeRounds(): Round[] {
-  return sample(LETTERS, TOTAL).map((l) => {
-    const nTargets = 5 + Math.floor(Math.random() * 3);
-    const similar = l.similar.filter((c) => LETTER_BY_CHAR[c]);
-    const fillers: string[] = [];
-    while (fillers.length < CELLS - nTargets) {
-      fillers.push(Math.random() < 0.5 && similar.length ? pick(similar) : pick(LETTERS).char);
-    }
-    const cells = shuffle([
-      ...Array(nTargets).fill(l.char),
-      ...fillers.map((c) => (c === l.char ? pick(LETTERS.filter((x) => x.char !== l.char)).char : c)),
-    ]);
-    return { target: l.char, cells };
-  });
+  const letters = sample(LETTERS, 3).map(letterRound);
+  return [letters[0], letters[1], dageshRound(), letters[2], finalRound(), vowelRound()];
 }
 
 export default function FindLetterGame({ onBack }: { onBack: () => void }) {
@@ -42,11 +102,10 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
 
   const r = rounds[q.round];
   const totalTargets = r.cells.filter((c) => c === r.target).length;
-  const letter = LETTER_BY_CHAR[r.target];
 
   useEffect(() => {
     setFound(new Set());
-    if (!q.done) void say(SAY.findAsk, letter.name);
+    if (!q.done) void say(SAY.findAsk, r.name);
   }, [q.round, seed]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const tap = (i: number) => {
@@ -95,8 +154,8 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
         <div className="flex flex-col gap-1">
           <p className="text-lg sm:text-xl font-semibold">{t.findAsk} {r.target}</p>
           <div className="flex items-center gap-2">
-            <span className="text-xl font-bold font-hebrew" dir="rtl">{letter.name}</span>
-            <SpeakButton text={[SAY.findAsk, letter.name]} size="sm" />
+            <span className="text-xl font-bold font-hebrew" dir="rtl">{r.name}</span>
+            <SpeakButton text={[SAY.findAsk, r.name]} size="sm" />
           </div>
           <div className="flex gap-1.5 mt-1" aria-hidden>
             {Array.from({ length: totalTargets }, (_, i) => (

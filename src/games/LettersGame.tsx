@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { GameShell, SpeakButton, Stars } from '../components/ui';
 import { t, SAY } from '../strings';
 import { LETTERS, FINAL_LETTERS } from '../data/letters';
+import { LETTER_SHAPES } from '../data/sheets';
 import { firstClusterLength } from '../lib/hebrew';
 import { say } from '../lib/audio';
 import { saveStars } from '../lib/progress';
@@ -22,7 +23,7 @@ export default function LettersGame({ onBack }: { onBack: () => void }) {
 
   const choose = (c: Card) => {
     setSelected(c);
-    void say(c.name, c.word);
+    void say(c.name, c.word, ...(LETTER_SHAPES[c.char] ? [LETTER_SHAPES[c.char]] : []));
     const next = new Set(seen).add(c.char);
     setSeen(next);
     if (!rewarded && LETTERS.every((l) => next.has(l.char))) {
@@ -66,6 +67,19 @@ export default function LettersGame({ onBack }: { onBack: () => void }) {
           </div>
         </div>
       </section>
+
+      {LETTER_SHAPES[selected.char] && (
+        <div
+          key={`shape-${selected.char}`}
+          className="anim-pop mt-3 flex items-center justify-center gap-2 bg-[#fff1e4] rounded-2xl px-4 py-2.5"
+        >
+          <span className="text-2xl" aria-hidden>✍️</span>
+          <p className="text-lg sm:text-xl font-semibold font-hebrew" dir="rtl">
+            {LETTER_SHAPES[selected.char]}
+          </p>
+          <SpeakButton text={LETTER_SHAPES[selected.char]} size="sm" />
+        </div>
+      )}
 
       <div className="flex items-center justify-between mt-6 mb-3">
         <p className="opacity-70">{t.lettersHint}</p>
