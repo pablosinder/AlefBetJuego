@@ -5,7 +5,7 @@ import { sfxOutput } from './sfx';
 
 const KEY = 'alefbet.music';
 const SRC = `${import.meta.env.BASE_URL}music/hu-elokeinu.mp3`;
-const VOLUME = 0.22;
+const VOLUME = 0.12; // bajita, debajo de la voz
 
 let enabled = (() => {
   try {
