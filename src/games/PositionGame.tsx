@@ -66,7 +66,7 @@ export default function PositionGame({ onBack }: { onBack: () => void }) {
     if (solved || wrong.includes(i)) return;
     if (i === r.index) {
       setSolved(true);
-      q.good(r.word.syl[i], r.he);
+      q.good(r.he);
       setTimeout(q.next, 2600);
     } else {
       setWrong((w) => [...w, i]);

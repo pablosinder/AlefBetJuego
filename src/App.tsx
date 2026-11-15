@@ -37,29 +37,37 @@ interface GameDef {
   glyph: string;
   color: string;
   edge: string;
+  section: 'letters' | 'sounds' | 'words';
   Component: ComponentType<{ onBack: () => void }>;
 }
 
 const GAMES: GameDef[] = [
-  { id: 'path', title: t.gPathTitle, glyph: '🗺️', color: '#10b981', edge: '#047857', Component: PathGame },
-  { id: 'letters', title: t.gLettersTitle, glyph: 'א', color: '#ff8a3d', edge: '#c85d1d', Component: LettersGame },
-  { id: 'first', title: t.gFirstTitle, glyph: '🐫', color: '#4f7cff', edge: '#2b4fb8', Component: FirstLetterGame },
-  { id: 'find', title: t.gFindTitle, glyph: 'ב', color: '#ef5da8', edge: '#c23f84', Component: FindLetterGame },
-  { id: 'inword', title: t.gInWordTitle, glyph: '🔍', color: '#8b5cf6', edge: '#6a3fd1', Component: InWordGame },
-  { id: 'vowels', title: t.gVowelsTitle, glyph: 'אַ', color: '#2bb673', edge: '#1f8f58', Component: VowelsGame },
-  { id: 'write', title: t.gWriteTitle, glyph: '✏️', color: '#f5b014', edge: '#c98c00', Component: WritingGame },
-  { id: 'complete', title: t.gCompleteTitle, glyph: 'אַ_', color: '#e8590c', edge: '#b8460a', Component: CompleteWordGame },
-  { id: 'connect', title: t.gConnectTitle, glyph: '🔗', color: '#0ea5e9', edge: '#0369a1', Component: ConnectGame },
-  { id: 'catch', title: t.gCatchTitle, glyph: '🧺', color: '#7c3aed', edge: '#5b21b6', Component: CatchLettersGame },
-  { id: 'color', title: t.gColorTitle, glyph: '🖍️', color: '#14b86a', edge: '#0e8a4f', Component: ColorGame },
-  { id: 'listen', title: t.gListenTitle, glyph: '👂', color: '#f43f5e', edge: '#be123c', Component: ListenGame },
-  { id: 'startend', title: t.gStartEndTitle, glyph: '⇆', color: '#d946ef', edge: '#a21caf', Component: StartEndGame },
-  { id: 'position', title: t.gPosTitle, glyph: '⚪', color: '#f97316', edge: '#c2560c', Component: PositionGame },
-  { id: 'sort', title: t.gSortTitle, glyph: '🗂️', color: '#0891b2', edge: '#0e6f86', Component: SortGame },
-  { id: 'maze', title: t.gMazeTitle, glyph: '🐭', color: '#ca8a04', edge: '#a16207', Component: MazeGame },
-  { id: 'read', title: t.gReadTitle, glyph: 'בָּ־נָ', color: '#6366f1', edge: '#4338ca', Component: ReadGame },
-  { id: 'gender', title: t.gGenderTitle, glyph: '🎀', color: '#ec4899', edge: '#be185d', Component: GenderGame },
-  { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', Component: SpeechPartsGame },
+  { id: 'path', title: t.gPathTitle, glyph: '🗺️', color: '#10b981', edge: '#047857', section: 'letters', Component: PathGame },
+  { id: 'letters', title: t.gLettersTitle, glyph: 'א', color: '#ff8a3d', edge: '#c85d1d', section: 'letters', Component: LettersGame },
+  { id: 'first', title: t.gFirstTitle, glyph: '🐫', color: '#4f7cff', edge: '#2b4fb8', section: 'sounds', Component: FirstLetterGame },
+  { id: 'find', title: t.gFindTitle, glyph: 'ב', color: '#ef5da8', edge: '#c23f84', section: 'letters', Component: FindLetterGame },
+  { id: 'inword', title: t.gInWordTitle, glyph: '🔍', color: '#8b5cf6', edge: '#6a3fd1', section: 'sounds', Component: InWordGame },
+  { id: 'vowels', title: t.gVowelsTitle, glyph: 'אַ', color: '#2bb673', edge: '#1f8f58', section: 'sounds', Component: VowelsGame },
+  { id: 'write', title: t.gWriteTitle, glyph: '✏️', color: '#f5b014', edge: '#c98c00', section: 'letters', Component: WritingGame },
+  { id: 'complete', title: t.gCompleteTitle, glyph: 'אַ_', color: '#e8590c', edge: '#b8460a', section: 'words', Component: CompleteWordGame },
+  { id: 'connect', title: t.gConnectTitle, glyph: '🔗', color: '#0ea5e9', edge: '#0369a1', section: 'sounds', Component: ConnectGame },
+  { id: 'catch', title: t.gCatchTitle, glyph: '🧺', color: '#7c3aed', edge: '#5b21b6', section: 'letters', Component: CatchLettersGame },
+  { id: 'color', title: t.gColorTitle, glyph: '🖍️', color: '#14b86a', edge: '#0e8a4f', section: 'letters', Component: ColorGame },
+  { id: 'listen', title: t.gListenTitle, glyph: '👂', color: '#f43f5e', edge: '#be123c', section: 'sounds', Component: ListenGame },
+  { id: 'startend', title: t.gStartEndTitle, glyph: '⇆', color: '#d946ef', edge: '#a21caf', section: 'sounds', Component: StartEndGame },
+  { id: 'position', title: t.gPosTitle, glyph: '⚪', color: '#f97316', edge: '#c2560c', section: 'sounds', Component: PositionGame },
+  { id: 'sort', title: t.gSortTitle, glyph: '🗂️', color: '#0891b2', edge: '#0e6f86', section: 'sounds', Component: SortGame },
+  { id: 'maze', title: t.gMazeTitle, glyph: '🐭', color: '#ca8a04', edge: '#a16207', section: 'sounds', Component: MazeGame },
+  { id: 'read', title: t.gReadTitle, glyph: 'בָּ־נָ', color: '#6366f1', edge: '#4338ca', section: 'words', Component: ReadGame },
+  { id: 'gender', title: t.gGenderTitle, glyph: '🎀', color: '#ec4899', edge: '#be185d', section: 'words', Component: GenderGame },
+  { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', section: 'words', Component: SpeechPartsGame },
+];
+
+// El menú se ordena en tres grupos, para que no sea una lista larga.
+const SECTIONS: { id: GameDef['section']; title: string; emoji: string }[] = [
+  { id: 'letters', title: t.secLetters, emoji: '🔤' },
+  { id: 'sounds', title: t.secSounds, emoji: '👂' },
+  { id: 'words', title: t.secWords, emoji: '📖' },
 ];
 
 // Chispitas y "pop" en cada botón que se toca.
@@ -188,44 +196,51 @@ function Screens() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
-          {GAMES.map((g, i) => {
-            const stars = progress[g.id] ?? 0;
-            const isNext = g.id === suggested;
-            return (
-              <button
-                key={g.id}
-                onClick={() => {
-                  sfx.whoosh();
-                  setActive(g.id);
-                }}
-                className={`chunky card-shine anim-pop bg-white p-4 flex flex-col items-center gap-3 ${isNext ? 'card-next' : ''}`}
-                style={{
-                  borderColor: isNext ? g.color : '#efe3cf',
-                  ['--chunk' as string]: isNext ? g.edge : '#eadcc3',
-                  ['--glow' as string]: g.color,
-                  animationDelay: `${i * 60}ms`,
-                }}
-              >
-                <div
-                  className="glyph-bob relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center text-6xl font-bold font-hebrew text-white"
-                  style={{
-                    background: `radial-gradient(circle at 28% 22%, rgba(255,255,255,0.55) 0 10%, rgba(255,255,255,0) 34%), ${g.color}`,
-                    boxShadow: `0 6px 0 ${g.edge}`,
-                    animationDelay: `${-i * 0.37}s`,
-                  }}
-                  aria-hidden
-                >
-                  {g.glyph}
-                  {stars === 3 && <span className="absolute -top-3 -end-3 text-3xl anim-wiggle">👑</span>}
-                  {isNext && <span className="absolute -bottom-3 -start-3 text-3xl anim-tap-hint">👆</span>}
-                </div>
-                <div className="text-lg sm:text-xl font-bold text-center leading-tight">{g.title}</div>
-                <Stars n={stars} size="w-6 h-6" />
-              </button>
-            );
-          })}
-        </div>
+        {SECTIONS.map((sec) => (
+          <section key={sec.id} className="mt-6">
+            <h2 className="flex items-center gap-2 text-2xl font-extrabold mb-3 opacity-80">
+              <span aria-hidden>{sec.emoji}</span> {sec.title}
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+              {GAMES.filter((g) => g.section === sec.id).map((g, i) => {
+                const stars = progress[g.id] ?? 0;
+                const isNext = g.id === suggested;
+                return (
+                  <button
+                    key={g.id}
+                    onClick={() => {
+                      sfx.whoosh();
+                      setActive(g.id);
+                    }}
+                    className={`chunky card-shine anim-pop bg-white p-4 flex flex-col items-center gap-3 ${isNext ? 'card-next' : ''}`}
+                    style={{
+                      borderColor: isNext ? g.color : '#efe3cf',
+                      ['--chunk' as string]: isNext ? g.edge : '#eadcc3',
+                      ['--glow' as string]: g.color,
+                      animationDelay: `${i * 60}ms`,
+                    }}
+                  >
+                    <div
+                      className="glyph-bob relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center text-6xl font-bold font-hebrew text-white"
+                      style={{
+                        background: `radial-gradient(circle at 28% 22%, rgba(255,255,255,0.55) 0 10%, rgba(255,255,255,0) 34%), ${g.color}`,
+                        boxShadow: `0 6px 0 ${g.edge}`,
+                        animationDelay: `${-i * 0.37}s`,
+                      }}
+                      aria-hidden
+                    >
+                      {g.glyph}
+                      {stars === 3 && <span className="absolute -top-3 -end-3 text-3xl anim-wiggle">👑</span>}
+                      {isNext && <span className="absolute -bottom-3 -start-3 text-3xl anim-tap-hint">👆</span>}
+                    </div>
+                    <div className="text-lg sm:text-xl font-bold text-center leading-tight">{g.title}</div>
+                    <Stars n={stars} size="w-6 h-6" />
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+        ))}
       </div>
       {albumOpen && <StickerAlbum onClose={() => setAlbumOpen(false)} />}
       {parentOpen && (

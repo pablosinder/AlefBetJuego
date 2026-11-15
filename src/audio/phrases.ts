@@ -6,7 +6,6 @@ import { PART_WORDS, SPEECH_PARTS } from '../data/speechParts';
 import { VOWELS } from '../lib/hebrew';
 import { SAY } from '../strings';
 import {
-  ALL_SYLLABLES,
   COLORS,
   DAGESH_PAIRS,
   GENDER_PAIRS,
@@ -39,7 +38,6 @@ export function allPhrases(): Phrase[] {
     })),
     ...GENDER_PAIRS.flatMap((g) => [g.male, g.female]).map((text) => ({ text, kind: 'word' as const })),
     ...Object.values(COLORS).map((c) => ({ text: c.name, kind: 'word' as const })),
-    ...ALL_SYLLABLES.map((text) => ({ text, kind: 'sound' as const })),
     ...Object.values(LETTER_SHAPES).map((text) => ({ text, kind: 'sentence' as const })),
     ...[
       SAY.welcome,
