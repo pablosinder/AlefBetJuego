@@ -8,13 +8,13 @@ Aplicación web para niños que empiezan a leer y escribir en hebreo. Todo está
 
 | Juego | Qué se practica | Inspirado en |
 |---|---|---|
-| **הָאוֹתִיּוֹת** – Las letras | Las 22 letras y las 5 finales, con su nombre, una palabra de ejemplo y su pronunciación | Hoja de letras |
+| **הָאוֹתִיּוֹת** – Las letras | Las 22 letras y las 5 finales, con su nombre, una palabra de ejemplo, su pronunciación y cómo se forma ("רֹאשׁ מִיָּמִין, קַו בַּאֲלַכְסוֹן…") | Hoja de letras y recuadros "לוֹמְדִים" |
 | **הָאוֹת הָרִאשׁוֹנָה** – La primera letra | Escuchar una palabra y elegir con qué letra empieza | Hoja 1 (לוֹמְדִים: א – אֲוִירוֹן) |
-| **מִצְאוּ אֶת הָאוֹת** – Encontrá la letra | Marcar cada aparición de una letra entre letras parecidas | Hoja 1, ejercicio 1 (הַקִּיפוּ כׇּל אוֹת א) |
+| **מִצְאוּ אֶת הָאוֹת** – Encontrá la letra | Marcar cada aparición de una letra entre letras parecidas; también con dagesh o sin él (בּ/ב, כּ/כ, פּ/פ), letras finales (ך ם ן ף ץ) y letra + קָמָץ o פַּתָּח (בָּ / בַּ) | Hoja 1, ejercicio 1 (הַקִּיפוּ כׇּל אוֹת א) |
 | **אוֹת בַּמִּלָּה** – Letra en la palabra | Marcar los dibujos cuyo nombre tiene la letra | Hoja 1, ejercicio 4 |
 | **תְּנוּעוֹת** – Vocales | Elegir el dibujo cuyo nombre empieza con la vocal (אַ, אֶ, אִ, אוֹ, אוּ) | Hoja 2 (אָ, אַ) |
 | **כְּתִיבַת אוֹתִיּוֹת** – Escribir letras | Repasar la letra con el dedo; se comprueba que el trazo cubra la letra. Grupos א–י, כ–ר, ש–ת + finales | Hojas de caligrafía 1, 2 y 5 |
-| **הַשְׁלִימוּ אֶת הַמִּלָּה** – Completar la palabra | Un dibujo y su palabra con una letra faltante; las opciones tienen la misma vocal | Hoja 8 (הַשְׁלִימוּ אֶת הַמִּלָּה עִם אָ אוֹ בָּ) |
+| **הַשְׁלִימוּ אֶת הַמִּלָּה** – Completar la palabra | Un dibujo y su palabra con una letra faltante; las opciones tienen la misma vocal o, a veces, son la misma letra con otra vocal | Hoja 8 (הַשְׁלִימוּ אֶת הַמִּלָּה עִם אָ אוֹ בָּ) |
 | **חַבְּרוּ בְּקַו** – Unir con líneas | Unir cada dibujo con su letra inicial, arrastrando el dedo o tocando uno y otro | Hoja 7 (חַבְּרוּ לְפִי הַהֲבָרָה) |
 | **תּוֹפְסִים אוֹתִיּוֹת** – Atrapar letras (arcade) | Mover una canasta para atrapar, en orden, las letras que caen y armar una palabra corta | — |
 | **מַסְלוּל הָאוֹתִיּוֹת** – Ruta de letras | Una parada por letra, en el orden de las hojas: aprenderla (nombre, palabra y cómo se forma), buscarla y escuchar palabras que empiezan con ella. La siguiente se abre al terminar | Orden de las hojas de כיתה א |
@@ -82,6 +82,8 @@ Así se grabaron las voces actuales (voz de AI Studio):
    ```
    `align-recording.py` elige entre todos los silencios del audio los cortes que mejor coinciden con la duración esperada de cada frase, así que tolera pausas internas ("שָׁלוֹם! …") y pausas más cortas que lo pedido. Conviene revisar el resultado en `/voces.html`.
 
+**Tandas pendientes:** las 116 sílabas del juego "קוֹרְאִים וּבוֹנִים" (`scripts/voice-batches/9-silabas-00.txt`, `-01`, `-02`, 39 por tanda). En la primera grabación Gemini las leyó sin pausas y no se pudieron cortar, así que conviene grabar cada tanda por separado y agregar a las *Style instructions*: `Each line is one short Hebrew syllable. Never join two lines together.` Mientras falten, se usa la voz del dispositivo. `nuevas-todo.txt` es la lista completa de la grabación del 15/11/2026 (las primeras 159 líneas ya están cortadas).
+
 ### Grabar con la API de Gemini
 
 Con una clave de [Google AI Studio](https://aistudio.google.com/apikey) y `ffmpeg`:
@@ -102,11 +104,13 @@ GEMINI_VOICE=Kore GEMINI_API_KEY=tu_clave node scripts/make-voices.mjs --all  # 
 - `src/lib/sounds.ts` – con qué sonido empieza / termina una palabra (sin contar ה, א, ע, ו, י mudas).
 - `src/strings.ts` – textos de pantalla (`t`) y frases habladas (`SAY`).
 
+Las hojas de trabajo de כיתה א (49 PDF, hojas 1–51) inspiraron los juegos nuevos; en la tabla de juegos figura qué hoja usa cada uno.
+
 Para agregar palabras o frases basta con sumar entradas con niqqud, correr `node scripts/missing-voices.mjs` y grabar las que falten.
 
 ## Publicación en Vercel
 
-Proyecto **alefbetjuego** en Vercel (Vite: *Build command* `npm run build`, *Output directory* `dist`; el sitio funciona desde la raíz del dominio). Vercel todavía no tiene acceso al repositorio de GitHub, así que no se actualiza solo con cada cambio: cada versión se publica a mano desde `main`. Para que se actualice solo, darle acceso al repositorio desde vercel.com/new y conectar el proyecto.
+Proyecto **alefbetjuego** en Vercel (Vite: *Build command* `npm run build`, *Output directory* `dist`; el sitio funciona desde la raíz del dominio). No se actualiza solo con cada cambio: cada versión se publica creando un deployment de producción desde `main` (por ejemplo, desde el conector de Vercel con *gitSource* `github` → `pablosinder/AlefBetJuego`, rama `main`, *target* `production`). Para que se actualice solo, conectar el repositorio al proyecto en la configuración de Git de Vercel.
 
 ## Desarrollo
 
