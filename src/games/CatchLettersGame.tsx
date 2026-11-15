@@ -5,7 +5,7 @@ import { WORDS } from '../data/words';
 import { LETTERS, LETTER_BY_CHAR, FINAL_LETTERS } from '../data/letters';
 import { pick, sample, stripNiqqud } from '../lib/hebrew';
 import { say } from '../lib/audio';
-import { sfx } from '../lib/sfx';
+import { juice } from '../lib/juice';
 import { cheer } from '../lib/cheer';
 import { saveStars, starsFor } from '../lib/progress';
 
@@ -83,7 +83,7 @@ export default function CatchLettersGame({ onBack }: { onBack: () => void }) {
   const finishWord = useCallback(() => {
     pausedRef.current = true;
     setCelebrating(true);
-    sfx.win();
+    juice.win();
     void say(word.he, cheer.praise());
     setTimeout(() => {
       if (wordIdx + 1 >= WORDS_PER_GAME) {
@@ -160,14 +160,15 @@ export default function CatchLettersGame({ onBack }: { onBack: () => void }) {
                 const nf = filledRef.current + 1;
                 filledRef.current = nf;
                 setFilled(nf);
-                sfx.correct();
+                const box = arena.getBoundingClientRect();
+                juice.correct({ x: box.left + it.x * W, y: box.top + basketY });
                 if (nf >= lettersRef.current.length) finishWord();
                 else void say(letterName(it.char));
               } else {
                 it.state = 'wrong';
                 it.t = 0;
                 caughtBad.current++;
-                sfx.wrong();
+                juice.wrong({ shake: false });
               }
             }
           }
@@ -275,7 +276,7 @@ export default function CatchLettersGame({ onBack }: { onBack: () => void }) {
             height: bubble,
             left: it.x * W - bubble / 2 + wob,
             top: it.y - bubble / 2,
-            background: it.color,
+            background: `radial-gradient(circle at 30% 24%, rgba(255,255,255,0.8) 0 8%, rgba(255,255,255,0) 24%), ${it.color}`,
             fontSize: bubble * 0.62,
           };
           if (it.state === 'caught') {

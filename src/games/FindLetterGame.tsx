@@ -4,7 +4,7 @@ import { t, SAY } from '../strings';
 import { LETTERS, LETTER_BY_CHAR } from '../data/letters';
 import { pick, sample, shuffle } from '../lib/hebrew';
 import { useQuiz } from '../lib/useQuiz';
-import { sfx } from '../lib/sfx';
+import { juice } from '../lib/juice';
 import { say } from '../lib/audio';
 
 const TOTAL = 6;
@@ -54,7 +54,7 @@ export default function FindLetterGame({ onBack }: { onBack: () => void }) {
     if (r.cells[i] === r.target) {
       const nf = new Set(found).add(i);
       setFound(nf);
-      sfx.tap();
+      juice.collect();
       if (nf.size === totalTargets) {
         q.good();
         setTimeout(q.next, 1300);

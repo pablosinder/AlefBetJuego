@@ -49,6 +49,10 @@ export const t = {
   connectAsk: 'חַבְּרוּ כׇּל תְּמוּנָה לָאוֹת שֶׁבָּהּ הִיא מַתְחִילָה',
   catchAsk: 'תִּפְסוּ בַּסַּל אֶת הָאוֹתִיּוֹת שֶׁל הַמִּלָּה, לְפִי הַסֵּדֶר',
   showDefs: 'מָה זֶה?',
+  album: 'הַמַּדְבֵּקוֹת שֶׁלִּי',
+  level: 'רָמָה',
+  gift: 'מַתָּנָה',
+  music: 'מוּזִיקָה',
 };
 
 /** Frases que se dicen en voz alta (además de letras y palabras). */

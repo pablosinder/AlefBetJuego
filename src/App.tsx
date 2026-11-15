@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, ComponentType } from 'react';
-import { Lock, LogOut, Play, RotateCcw, Star, X } from 'lucide-react';
+import { Lock, LogOut, Music, Play, RotateCcw, Star, VolumeX, X } from 'lucide-react';
 import { t, SAY } from './strings';
 import { Stars } from './components/ui';
 import { loadProgress, resetProgress } from './lib/progress';
@@ -7,6 +7,10 @@ import { preload, say, stopAudio, unlockAudio } from './lib/audio';
 import { allPhrases } from './audio/phrases';
 import { enterFullscreen, exitFullscreen, lockDown } from './lib/kiosk';
 import { sfx } from './lib/sfx';
+import { fx } from './lib/fx';
+import { music } from './lib/music';
+import { rewards, STICKERS, useRewards } from './lib/rewards';
+import { Backdrop, GemCounter, LevelBadge, RewardLayer, StickerAlbum } from './components/rewards';
 import LettersGame from './games/LettersGame';
 import FirstLetterGame from './games/FirstLetterGame';
 import FindLetterGame from './games/FindLetterGame';
@@ -40,11 +44,27 @@ const GAMES: GameDef[] = [
   { id: 'parts', title: t.gPartsTitle, glyph: '📚', color: '#14b8c4', edge: '#0e8a93', Component: SpeechPartsGame },
 ];
 
+// Chispitas y "pop" en cada botón que se toca.
+fx.init(() => sfx.tap());
+
 export default function App() {
+  return (
+    <>
+      <Backdrop />
+      <Screens />
+      <RewardLayer />
+    </>
+  );
+}
+
+function Screens() {
   const [started, setStarted] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   const [progress, setProgress] = useState(loadProgress);
   const [parentOpen, setParentOpen] = useState(false);
+  const [albumOpen, setAlbumOpen] = useState(false);
+  const [musicOn, setMusicOn] = useState(music.isEnabled);
+  const rw = useRewards();
   const unlockRef = useRef<(() => void) | null>(null);
 
   const goMenu = () => {
@@ -59,6 +79,7 @@ export default function App() {
     enterFullscreen();
     unlockRef.current?.();
     unlockRef.current = lockDown(goMenu);
+    rewards.touchDay();
     setStarted(true);
     void say(SAY.welcome);
   };
@@ -74,6 +95,12 @@ export default function App() {
 
   useEffect(() => () => unlockRef.current?.(), []);
 
+  // Música solo en el menú: dentro de los juegos mandan las voces.
+  useEffect(() => {
+    music.want(started && !active);
+    return () => music.want(false);
+  }, [started, active]);
+
   if (!started) return <StartScreen onStart={start} />;
 
   const game = GAMES.find((g) => g.id === active);
@@ -83,52 +110,106 @@ export default function App() {
   }
 
   const totalStars = Object.values(progress).reduce((a, b) => a + b, 0);
+  // Próximo juego sugerido: el primero que todavía no tiene las 3 estrellas.
+  const suggested = GAMES.find((g) => (progress[g.id] ?? 0) < 3)?.id;
 
   return (
     <div className="min-h-full">
       <div className="max-w-4xl mx-auto px-4 pt-5 pb-10">
         <header className="flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <Logo />
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">{t.appTitle}</h1>
+            <h1 className="candy-text text-3xl sm:text-4xl tracking-tight truncate">{t.appTitle}</h1>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 font-bold text-amber-600 text-xl" dir="ltr">
-              <Star className="w-7 h-7 fill-amber-400 text-amber-500" />
-              <span className="tabular-nums">{totalStars}</span>
-            </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMusicOn(music.toggle())}
+              aria-label={t.music}
+              aria-pressed={musicOn}
+              className={`w-11 h-11 rounded-full flex items-center justify-center border-2 ${
+                musicOn ? 'bg-[#ef5da8] border-[#c23f84] text-white' : 'bg-white border-[#e8dcc6] text-[#c9bba2]'
+              }`}
+            >
+              {musicOn ? <Music className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
+            </button>
             <ParentLock onOpen={() => setParentOpen(true)} />
           </div>
         </header>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
-          {GAMES.map((g, i) => (
-            <button
-              key={g.id}
-              onClick={() => {
-                sfx.tap();
-                setActive(g.id);
-              }}
-              className="chunky anim-pop bg-white p-4 flex flex-col items-center gap-3"
-              style={{
-                borderColor: '#efe3cf',
-                ['--chunk' as string]: '#eadcc3',
-                animationDelay: `${i * 50}ms`,
-              }}
+        {/* Tablero de premios: nivel, gemas, estrellas, días seguidos y álbum */}
+        <div className="anim-pop mt-4 rounded-3xl bg-white/80 backdrop-blur border-2 border-[#f3e4cc] shadow-[0_5px_0_#f0dcbc] p-3 flex items-center gap-3 flex-wrap">
+          <LevelBadge />
+          <GemCounter />
+          <div
+            className="flex items-center gap-1 rounded-full bg-white/90 border-2 border-[#fde9a8] px-2.5 py-1 font-extrabold text-amber-600 shadow-[0_3px_0_#f6dc8a]"
+            dir="ltr"
+          >
+            <Star className="w-5 h-5 fill-amber-400 text-amber-500" />
+            <span className="tabular-nums">{totalStars}</span>
+          </div>
+          {rw.dayStreak >= 2 && (
+            <div
+              className="flex items-center gap-1 rounded-full bg-white/90 border-2 border-[#ffd3bf] px-2.5 py-1 font-extrabold text-[#e8590c] shadow-[0_3px_0_#ffc2a6]"
+              dir="ltr"
             >
-              <div
-                className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center text-6xl font-bold font-hebrew text-white"
-                style={{ background: g.color, boxShadow: `0 5px 0 ${g.edge}` }}
-                aria-hidden
+              <span className="anim-flame" aria-hidden>🔥</span>
+              <span className="tabular-nums">{rw.dayStreak}</span>
+            </div>
+          )}
+          <button
+            onClick={() => setAlbumOpen(true)}
+            aria-label={t.album}
+            className="chunky bg-[#fff4d6] border-[#ffd98a] px-3 py-1.5 font-extrabold flex items-center gap-1.5"
+            style={{ ['--chunk' as string]: '#f0c668' }}
+            dir="ltr"
+          >
+            <span className="text-2xl anim-wiggle" aria-hidden>📒</span>
+            <span className="tabular-nums text-[#b77700]">
+              {rw.stickers.length}/{STICKERS.length}
+            </span>
+          </button>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
+          {GAMES.map((g, i) => {
+            const stars = progress[g.id] ?? 0;
+            const isNext = g.id === suggested;
+            return (
+              <button
+                key={g.id}
+                onClick={() => {
+                  sfx.whoosh();
+                  setActive(g.id);
+                }}
+                className={`chunky card-shine anim-pop bg-white p-4 flex flex-col items-center gap-3 ${isNext ? 'card-next' : ''}`}
+                style={{
+                  borderColor: isNext ? g.color : '#efe3cf',
+                  ['--chunk' as string]: isNext ? g.edge : '#eadcc3',
+                  ['--glow' as string]: g.color,
+                  animationDelay: `${i * 60}ms`,
+                }}
               >
-                {g.glyph}
-              </div>
-              <div className="text-lg sm:text-xl font-bold text-center leading-tight">{g.title}</div>
-              <Stars n={progress[g.id] ?? 0} size="w-5 h-5" />
-            </button>
-          ))}
+                <div
+                  className="glyph-bob relative w-24 h-24 sm:w-28 sm:h-28 rounded-3xl flex items-center justify-center text-6xl font-bold font-hebrew text-white"
+                  style={{
+                    background: `radial-gradient(circle at 28% 22%, rgba(255,255,255,0.55) 0 10%, rgba(255,255,255,0) 34%), ${g.color}`,
+                    boxShadow: `0 6px 0 ${g.edge}`,
+                    animationDelay: `${-i * 0.37}s`,
+                  }}
+                  aria-hidden
+                >
+                  {g.glyph}
+                  {stars === 3 && <span className="absolute -top-3 -end-3 text-3xl anim-wiggle">👑</span>}
+                  {isNext && <span className="absolute -bottom-3 -start-3 text-3xl anim-tap-hint">👆</span>}
+                </div>
+                <div className="text-lg sm:text-xl font-bold text-center leading-tight">{g.title}</div>
+                <Stars n={stars} size="w-6 h-6" />
+              </button>
+            );
+          })}
         </div>
       </div>
+      {albumOpen && <StickerAlbum onClose={() => setAlbumOpen(false)} />}
       {parentOpen && (
         <ParentMenu
           onClose={() => setParentOpen(false)}
@@ -136,7 +217,10 @@ export default function App() {
             setParentOpen(false);
             parentExit();
           }}
-          onReset={() => setProgress(resetProgress())}
+          onReset={() => {
+            rewards.reset();
+            setProgress(resetProgress());
+          }}
         />
       )}
     </div>
@@ -202,24 +286,48 @@ function ParentMenu({ onClose, onExit, onReset }: { onClose: () => void; onExit:
 }
 
 function StartScreen({ onStart }: { onStart: () => void }) {
+  const deco = ['⭐', '🎈', '💎', '🍭', '🌈', '🎁'];
   return (
-    <div className="min-h-full flex flex-col items-center justify-center gap-8 p-6 text-center">
-      <div className="scale-150 mb-4">
+    <div className="relative min-h-full flex flex-col items-center justify-center gap-8 p-6 text-center overflow-hidden">
+      {deco.map((d, i) => (
+        <span
+          key={d}
+          className="absolute text-4xl sm:text-5xl anim-floaty"
+          style={{
+            top: `${[10, 18, 68, 78, 8, 60][i]}%`,
+            left: `${[8, 80, 6, 84, 45, 48][i]}%`,
+            animationDelay: `${-i * 0.6}s`,
+            opacity: 0.85,
+          }}
+          aria-hidden
+        >
+          {d}
+        </span>
+      ))}
+      <div className="scale-150 mb-4 anim-pop">
         <Logo />
       </div>
       <div>
-        <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">{t.appTitle}</h1>
-        <p className="text-xl opacity-70 mt-2">{t.appSubtitle}</p>
+        <h1 className="candy-text text-6xl sm:text-7xl tracking-tight anim-title">{t.appTitle}</h1>
+        <p className="text-xl font-semibold opacity-70 mt-3">{t.appSubtitle}</p>
       </div>
-      <button
-        onClick={onStart}
-        aria-label={t.start}
-        className="chunky anim-floaty w-40 h-40 sm:w-48 sm:h-48 rounded-full bg-[#2bb673] border-[#1f8f58] text-white flex flex-col items-center justify-center gap-1"
-        style={{ ['--chunk' as string]: '#1a7a4b' }}
-      >
-        <Play className="w-20 h-20 fill-white -scale-x-100" />
-        <span className="text-xl font-bold">{t.start}</span>
-      </button>
+      <div className="relative">
+        <span className="pulse-ring" aria-hidden />
+        <span className="pulse-ring" style={{ animationDelay: '0.9s' }} aria-hidden />
+        <button
+          onClick={onStart}
+          aria-label={t.start}
+          className="chunky anim-play relative w-44 h-44 sm:w-52 sm:h-52 rounded-full border-[#1f8f58] text-white flex flex-col items-center justify-center gap-1"
+          style={{
+            background:
+              'radial-gradient(circle at 30% 22%, rgba(255,255,255,0.5) 0 9%, rgba(255,255,255,0) 32%), linear-gradient(160deg,#4fdc94,#1fa565)',
+            ['--chunk' as string]: '#1a7a4b',
+          }}
+        >
+          <Play className="w-20 h-20 fill-white -scale-x-100" />
+          <span className="text-xl font-bold">{t.start}</span>
+        </button>
+      </div>
     </div>
   );
 }

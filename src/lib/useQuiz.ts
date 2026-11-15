@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { sfx } from './sfx';
+import { juice } from './juice';
 import { say } from './audio';
 import { cheer, STREAK_AT } from './cheer';
 import { saveStars, starsFor } from './progress';
@@ -22,7 +22,7 @@ export function useQuiz(gameId: string, total: number) {
 
   /** Acierto: sonido + (frases opcionales) + un elogio (o festejo de racha). */
   const good = useCallback((...before: string[]) => {
-    sfx.correct();
+    juice.correct();
     const s = missedRef.current ? 0 : streak.current + 1;
     const text = STREAK_AT.has(s) ? cheer.streak() : cheer.praise();
     void say(...before, text);
@@ -33,7 +33,7 @@ export function useQuiz(gameId: string, total: number) {
 
   /** Error: sonido + (frases opcionales) + una frase de ánimo. */
   const bad = useCallback((...before: string[]) => {
-    sfx.wrong();
+    juice.wrong();
     const text = cheer.encourage();
     void say(...before, text);
     setFeedbackText(text);

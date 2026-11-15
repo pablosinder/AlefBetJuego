@@ -25,6 +25,15 @@ Cada juego guarda en el navegador las mejores estrellas (★★★) obtenidas.
 
 Al acertar se dice un elogio al azar (14 distintos); al equivocarse, una frase de ánimo (6); con 3, 5, 8 y 12 rondas seguidas sin errores, una frase de racha; y al terminar un juego, una de 3 frases finales. Nunca se repite la misma dos veces seguidas, y el texto en pantalla es la misma frase que se escucha. Las listas están en `SAY` dentro de `src/strings.ts`.
 
+## Premios y efectos
+
+- **Efectos** (`src/lib/fx.ts`, `src/lib/sfx.ts`, `src/lib/juice.ts`): partículas, fuegos artificiales, papelitos y sonidos sintetizados. Cada acierto seguido sube el tono y agranda la explosión (racha 🔥).
+- **Gemas 💎 y nivel 👑**: cada acierto da gemas (más con racha) y las estrellas del final dan un extra; las gemas suben el nivel.
+- **Regalo 🎁 y álbum 📒**: al terminar un juego se abre una caja con una figurita nueva (36 en total).
+- **Días seguidos 🔥**: se muestra a partir del segundo día. Nunca se pierde nada por equivocarse o por no jugar.
+- **Música** de fondo solo en el menú, con botón para apagarla. El menú de padres también borra gemas y figuritas al reiniciar.
+- Con *reducir movimiento* activado en el dispositivo, las animaciones se apagan.
+
 ## Modo niño
 
 - Al abrir aparece un botón grande **בּוֹאוּ נְשַׂחֵק!** que activa la pantalla completa y el audio.
