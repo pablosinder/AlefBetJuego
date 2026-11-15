@@ -77,8 +77,6 @@ export const SYL_WORDS: SylWord[] = [
 
 export const sylWord = (w: SylWord) => w.syl.join('');
 
-/** Todas las sílabas distintas (para grabarlas). */
-export const ALL_SYLLABLES: string[] = [...new Set(SYL_WORDS.flatMap((w) => w.syl))];
 
 export interface GenderPair {
   male: string;

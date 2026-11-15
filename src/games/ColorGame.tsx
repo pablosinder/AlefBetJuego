@@ -121,7 +121,7 @@ export default function ColorGame({ onBack }: { onBack: () => void }) {
 
         {/* El dibujo */}
         <div
-          className="grid gap-[2px] p-2 bg-white rounded-2xl border-2 border-[#e5d9c4] shadow-[0_6px_0_#e9dbc2] w-full max-w-[min(92vw,26rem)]"
+          className="grid gap-[2px] p-2 bg-white rounded-2xl border-2 border-[#e5d9c4] shadow-[0_6px_0_#e9dbc2] w-full max-w-[min(96vw,28rem)]"
           style={{ gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))` }}
           dir="ltr"
         >
@@ -134,7 +134,7 @@ export default function ColorGame({ onBack }: { onBack: () => void }) {
                 key={i}
                 onClick={() => tapCell(i)}
                 aria-label={info.letter}
-                className={`aspect-square rounded-[4px] flex items-center justify-center font-hebrew font-bold text-[clamp(0.6rem,2.6vw,1rem)] transition-colors duration-300 ${
+                className={`aspect-square rounded-[4px] flex items-center justify-center font-hebrew font-bold text-[clamp(0.8rem,3.6vw,1.15rem)] transition-colors duration-300 ${
                   shake === i ? 'anim-shake' : ''
                 }`}
                 style={{

@@ -87,14 +87,13 @@ function ReadRound({ r, q }: { r: Extract<Round, { kind: 'read' }>; q: Q }) {
   const tapSyl = (i: number) => {
     if (i !== lit) {
       if (i > lit) void say(SAY.readAsk);
-      else void say(r.word.syl[i]);
       return;
     }
     const n = lit + 1;
     setLit(n);
     juice.collect();
-    if (n === r.word.syl.length) void say(r.word.syl[i], r.he, SAY.readPick);
-    else void say(r.word.syl[i]);
+    // Las sílabas no se dicen (la niña las lee); al final se dice la palabra entera.
+    if (n === r.word.syl.length) void say(r.he, SAY.readPick);
   };
 
   const pickPic = (w: SylWord) => {

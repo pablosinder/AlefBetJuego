@@ -82,7 +82,7 @@ Así se grabaron las voces actuales (voz de AI Studio):
    ```
    `align-recording.py` elige entre todos los silencios del audio los cortes que mejor coinciden con la duración esperada de cada frase, así que tolera pausas internas ("שָׁלוֹם! …") y pausas más cortas que lo pedido. Conviene revisar el resultado en `/voces.html`.
 
-**Tandas pendientes:** las 116 sílabas del juego "קוֹרְאִים וּבוֹנִים" (`scripts/voice-batches/9-silabas-00.txt`, `-01`, `-02`, 39 por tanda). En la primera grabación Gemini las leyó sin pausas y no se pudieron cortar, así que conviene grabar cada tanda por separado y agregar a las *Style instructions*: `Each line is one short Hebrew syllable. Never join two lines together.` Mientras falten, se usa la voz del dispositivo. `nuevas-todo.txt` es la lista completa de la grabación del 15/11/2026 (las primeras 159 líneas ya están cortadas).
+Las sílabas sueltas del juego "קוֹרְאִים וּבוֹנִים" no se graban: Gemini se salta sílabas cortas y no se pueden cortar con seguridad, así que el juego deja que la niña las lea y dice solo la palabra entera.
 
 ### Grabar con la API de Gemini
 
