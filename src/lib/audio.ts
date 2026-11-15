@@ -24,62 +24,8 @@ export function audioContext(): AudioContext | null {
   }
 }
 
-/** WAV silencioso de 1 s, para el truco del interruptor de silencio de iPhone. */
-function silentWavUrl(): string {
-  const rate = 8000;
-  const n = rate; // 1 segundo
-  const buf = new ArrayBuffer(44 + n);
-  const v = new DataView(buf);
-  const w = (o: number, str: string) => [...str].forEach((ch, i) => v.setUint8(o + i, ch.charCodeAt(0)));
-  w(0, 'RIFF');
-  v.setUint32(4, 36 + n, true);
-  w(8, 'WAVE');
-  w(12, 'fmt ');
-  v.setUint32(16, 16, true);
-  v.setUint16(20, 1, true); // PCM
-  v.setUint16(22, 1, true); // mono
-  v.setUint32(24, rate, true);
-  v.setUint32(28, rate, true);
-  v.setUint16(32, 1, true);
-  v.setUint16(34, 8, true); // 8 bits
-  w(36, 'data');
-  v.setUint32(40, n, true);
-  for (let i = 0; i < n; i++) v.setUint8(44 + i, 128); // silencio en 8 bits
-  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
-}
-
-let keepAlive: HTMLAudioElement | null = null;
-
-/**
- * En iPhone, Web Audio queda en silencio si el interruptor lateral está en "silencio".
- * Pedimos sesión de "reproducción" (Safari 17+) y, para versiones anteriores, mantenemos
- * sonando un <audio> silencioso en bucle, que cambia la sesión de audio al modo reproducción.
- */
-function iosPlaybackSession() {
-  try {
-    const nav = navigator as Navigator & { audioSession?: { type: string } };
-    if (nav.audioSession) nav.audioSession.type = 'playback';
-  } catch {
-    // ignorar
-  }
-  try {
-    if (!keepAlive) {
-      keepAlive = document.createElement('audio');
-      keepAlive.src = silentWavUrl();
-      keepAlive.loop = true;
-      keepAlive.setAttribute('playsinline', '');
-      keepAlive.setAttribute('x-webkit-airplay', 'deny');
-      keepAlive.preload = 'auto';
-    }
-    if (keepAlive.paused) void keepAlive.play().catch(() => {});
-  } catch {
-    // ignorar
-  }
-}
-
 /** Debe llamarse dentro de un toque del usuario para habilitar el audio. */
 export function unlockAudio() {
-  iosPlaybackSession();
   const c = audioContext();
   if (c) {
     // Un sonido vacío dentro del toque desbloquea el audio en iOS.
@@ -91,23 +37,6 @@ export function unlockAudio() {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.speak(new SpeechSynthesisUtterance(''));
   }
-}
-
-// iOS suspende el audio al bloquear la pantalla, cambiar de app o recibir una llamada:
-// cualquier toque lo vuelve a activar.
-if (typeof window !== 'undefined') {
-  const wake = () => {
-    if (!ctx) return;
-    if (ctx.state !== 'running') void ctx.resume().catch(() => {});
-    if (keepAlive) iosPlaybackSession();
-  };
-  for (const ev of ['pointerdown', 'touchend', 'click', 'keydown']) {
-    window.addEventListener(ev, wake, { capture: true, passive: true });
-  }
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') wake();
-    else keepAlive?.pause();
-  });
 }
 
 // Grabaciones ya descargadas y decodificadas (null = no existe).
@@ -149,7 +78,6 @@ export function stopAudio() {
     // ya terminó
   }
   current = null;
-  fallbackPlayer?.pause();
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
 }
 
@@ -157,41 +85,15 @@ function playBuffer(buf: AudioBuffer, my: number): Promise<void> {
   return new Promise((resolve) => {
     const c = audioContext();
     if (!c || my !== token) return resolve();
-    let finished = false;
-    const end = () => {
-      if (finished) return;
-      finished = true;
-      if (current === src) current = null;
-      resolve();
-    };
     const src = c.createBufferSource();
     src.buffer = buf;
     src.connect(c.destination);
-    src.onended = end;
-    current = src;
-    src.start(0);
-    // Si el contexto quedó suspendido, "ended" nunca llega: no trabar la secuencia.
-    setTimeout(end, buf.duration * 1000 + 600);
-  });
-}
-
-// Plan B (iPhone con el audio de Web Audio todavía dormido): un <audio> común.
-const fallbackPlayer = typeof Audio !== 'undefined' ? new Audio() : null;
-fallbackPlayer?.setAttribute('playsinline', '');
-
-function playElement(id: string, my: number): Promise<void> {
-  return new Promise((resolve) => {
-    if (!fallbackPlayer || my !== token) return resolve();
-    const done = () => {
-      fallbackPlayer.onended = null;
-      fallbackPlayer.onerror = null;
+    src.onended = () => {
+      if (current === src) current = null;
       resolve();
     };
-    fallbackPlayer.onended = done;
-    fallbackPlayer.onerror = done;
-    fallbackPlayer.src = `${BASE}${id}.mp3`;
-    fallbackPlayer.play().catch(done);
-    setTimeout(done, 10000);
+    current = src;
+    src.start(0);
   });
 }
 
@@ -221,9 +123,7 @@ export async function say(...texts: string[]): Promise<void> {
   for (const [i, text] of texts.entries()) {
     const buf = await pending[i];
     if (my !== token) return;
-    const id = clipId(text);
-    if (buf && ctx?.state === 'running') await playBuffer(buf, my);
-    else if (buf) await playElement(id, my);
+    if (buf) await playBuffer(buf, my);
     else await speakTTS(text, my);
   }
 }
